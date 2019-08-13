@@ -63,7 +63,7 @@ export default function Body({
           ) : (
             ''
           )}
-          <SockCount>{reserveSOCKSToken && `${amountFormatter(reserveSOCKSToken, 18, 0)}/500 available`}</SockCount>
+          <SockCount>{reserveSOCKSToken && `${amountFormatter(reserveSOCKSToken, 18, 0)}/20 available`}</SockCount>
         </MarketData>
       </div>
       <Checkout
