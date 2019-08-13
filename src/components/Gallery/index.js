@@ -5,7 +5,7 @@ import test from './urings.jpg'
 
 const GalleryFrame = styled.div`
   width: 90vw;
-  height: 90vw;
+  padding-top:10px;
   min-height: 150px;
   min-width: 200px;
   max-height: 250px;

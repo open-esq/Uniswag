@@ -43,7 +43,7 @@ export default function Body({
   }, [])
 
   const Content = (
-    <>
+    <span>
       <Header ready={ready} dollarPrice={dollarPrice} />
       <Gallery />
       <div>
@@ -65,13 +65,6 @@ export default function Body({
           )}
           <SockCount>{reserveSOCKSToken && `${amountFormatter(reserveSOCKSToken, 18, 0)}/500 available`}</SockCount>
         </MarketData>
-        <Redeem>
-          {/* {balanceSOCKS > 0 ? `You have ${amountFormatter(balanceSOCKS, 18, 0)} SOCKS !! ` : 'Try clicking buyyyyy '} */}
-          <RedeemLink>
-            <s>Redeem</s>
-          </RedeemLink>
-          &nbsp;Coming Soon!™
-        </Redeem>
       </div>
       <Checkout
         selectedTokenSymbol={selectedTokenSymbol}
@@ -89,10 +82,10 @@ export default function Body({
         setCurrentTransaction={setCurrentTransaction}
         clearCurrentTransaction={clearCurrentTransaction}
       />
-    </>
+    </span>
   )
 
-  return <AppWrapper>{Content}</AppWrapper>
+  return <AppWrapper>{Content}{Content}{Content}</AppWrapper>
 }
 
 const AppWrapper = styled.div`
@@ -104,10 +97,14 @@ const AppWrapper = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding-top: 20vh;
+  padding-top: 50px;
   overflow: scroll;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 5px;
+  text-align: center;
   @media only screen and (min-device-width: 768px) {
-    max-height: 480px;
+
     overflow: hidden;
     height: 100%;
   }
@@ -115,13 +112,11 @@ const AppWrapper = styled.div`
     /* padding-top: 0px; */
     overflow: hidden;
     padding-left: 2rem;
-    max-height: 640px;
   }
   @media only screen and (max-width: 480px) {
     padding-top: 0px;
     padding-left: 0px;
     overflow: hidden;
-    max-height: 800px;
   }
 `
 
@@ -174,6 +169,7 @@ const Intro = styled.p`
   max-width: 300px;
   line-height: 180%;
   font-weight: 500;
+  text-align:left;
   color: ${props => props.theme.primary};
   @media only screen and (max-width: 480px) {
     /* For mobile phones: */
