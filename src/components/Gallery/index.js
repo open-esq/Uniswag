@@ -1,19 +1,18 @@
 import * as React from 'react'
 import styled from 'styled-components'
 
-import test from './test.png'
+import test from './urings.jpg'
 
 const GalleryFrame = styled.div`
   width: 90vw;
   height: 90vw;
-  min-height: 200px;
+  min-height: 150px;
   min-width: 200px;
   max-height: 250px;
   max-width: 250px;
   display: flex;
   align-items: center;
-  flex-direction: center;
-  background-color: ${props => props.theme.black};
+  flex-direction: center;;
 `
 
 const ImgStyle = styled.img`

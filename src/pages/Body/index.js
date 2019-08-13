@@ -13,9 +13,9 @@ function Header({ ready, dollarPrice }) {
   return (
     <HeaderFrame>
       <Status ready={ready} account={account} />
-      <Title>unisocks token (SOCKS)</Title>
+      <Title>Uni ring tokens (URING)</Title>
       <CurrentPrice>{dollarPrice && `$${amountFormatter(dollarPrice, 18, 2)} USD`}</CurrentPrice>
-      <Tagline>dynamically priced socks</Tagline>
+      <Tagline>dynamically priced rings</Tagline>
     </HeaderFrame>
   )
 }
@@ -42,17 +42,17 @@ export default function Body({
     _setCurrentTransaction({})
   }, [])
 
-  return (
-    <AppWrapper>
+  const Content = (
+    <>
       <Header ready={ready} dollarPrice={dollarPrice} />
       <Gallery />
       <div>
         <Intro>
-          purchasing a <b>SOCKS</b> entitles you to 1{' '}
+          purchasing a <b>URING</b> entitles you to 1{' '}
           <i>
             <b>real</b>
           </i>{' '}
-          pair of limited edition socks, shipped anywhere in the world.
+          limited edition uni ring, shipped anywhere in the world.
         </Intro>
         <BuyButtons balance={balanceSOCKS} />
         <MarketData>
@@ -89,8 +89,10 @@ export default function Body({
         setCurrentTransaction={setCurrentTransaction}
         clearCurrentTransaction={clearCurrentTransaction}
       />
-    </AppWrapper>
+    </>
   )
+
+  return <AppWrapper>{Content}</AppWrapper>
 }
 
 const AppWrapper = styled.div`
