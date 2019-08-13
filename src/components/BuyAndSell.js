@@ -144,7 +144,7 @@ export default function BuyAndSell({
 
     return (
       <>
-        <p>{state.count} SOCKS</p>
+        <p>{state.count} URING</p>
         {conditionalRender}
       </>
     )
@@ -166,7 +166,7 @@ export default function BuyAndSell({
       </CheckoutControls>
       {shouldRenderUnlock ? (
         <ButtonFrame
-          text={`Unlock ${buying ? selectedTokenSymbol : 'SOCKS'}`}
+          text={`Unlock ${buying ? selectedTokenSymbol : 'URING'}`}
           type={'cta'}
           onClick={() => {
             unlock(buying).then(({ hash }) => {
@@ -178,7 +178,7 @@ export default function BuyAndSell({
         <ButtonFrame
           className="button"
           disabled={validationError !== null}
-          text={account === null ? 'Connect Wallet' : buying ? 'Buy SOCKS' : 'Sell SOCKS'}
+          text={account === null ? 'Connect Wallet' : buying ? 'Buy URING' : 'Sell URING'}
           type={'cta'}
           onClick={() => {
             if (account === null) {
