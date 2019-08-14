@@ -1,13 +1,16 @@
 import React, { useState, useCallback } from 'react'
 import styled from 'styled-components'
+import { Container, Segment, Form, Header } from 'semantic-ui-react'
+
 import { useWeb3Context } from 'web3-react'
 
 import Gallery from '../../components/Gallery'
 import BuyButtons from '../../components/Buttons'
 import Checkout from '../../components/Checkout'
 import { amountFormatter } from '../../utils'
+import { useAddItemForm } from '../../hooks'
 
-function Header({ ready, dollarPrice }) {
+function Heading({ ready, dollarPrice }) {
   const { account } = useWeb3Context()
 
   return (
@@ -41,10 +44,16 @@ export default function Body({
   const clearCurrentTransaction = useCallback(() => {
     _setCurrentTransaction({})
   }, [])
+  const addItem = () => {
+    alert(`Item Created!
+      address: ${inputs.tokenAddress}
+      description: ${inputs.itemDescription}`)
+  }
+  const { inputs, handleInputChange, handleSubmit } = useAddItemForm(addItem)
 
   const Content = (
     <span>
-      <Header ready={ready} dollarPrice={dollarPrice} />
+      <Heading ready={ready} dollarPrice={dollarPrice} />
       <Gallery />
       <div>
         <Intro>
@@ -85,7 +94,35 @@ export default function Body({
     </span>
   )
 
-  return <AppWrapper>{Content}{Content}{Content}</AppWrapper>
+  return (
+    <div>
+      <Segment style={{ float: 'left', margin: '3em', width: '400px' }}>
+
+      <Header as="h2">Add your Uniswap item</Header>
+        <Form onSubmit={handleSubmit}>
+          <Form.Input
+            label="Token Address"
+            name="tokenAddress"
+            onChange={handleInputChange}
+            value={inputs.tokenAddress}
+          />
+          <Form.Input
+            label="Item Description"
+            name="itemDescription"
+            onChange={handleInputChange}
+            value={inputs.itemDescription}
+          />
+
+          <Form.Button type="submit">Submit</Form.Button>
+        </Form>
+      </Segment>
+      <AppWrapper>
+        {Content}
+        {Content}
+        {Content}
+      </AppWrapper>
+    </div>
+  )
 }
 
 const AppWrapper = styled.div`
@@ -104,7 +141,6 @@ const AppWrapper = styled.div`
   grid-gap: 5px;
   text-align: center;
   @media only screen and (min-device-width: 768px) {
-
     overflow: hidden;
     height: 100%;
   }
@@ -169,7 +205,7 @@ const Intro = styled.p`
   max-width: 300px;
   line-height: 180%;
   font-weight: 500;
-  text-align:left;
+  text-align: left;
   color: ${props => props.theme.primary};
   @media only screen and (max-width: 480px) {
     /* For mobile phones: */

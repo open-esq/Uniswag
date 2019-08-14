@@ -10,7 +10,7 @@ import {
   useAddressAllowance,
   useExchangeReserves,
   useExchangeAllowance,
-  useItemFetch
+  useItemFetch,
 } from '../../hooks'
 import Body from '../Body'
 

@@ -45,7 +45,7 @@ export function useItemFetch() {
   const [title, setTitle] = useState()
 
   async function fetchData() {
-    const titleRes = await getItems();
+    const titleRes = await getItems()
     setTitle(titleRes)
   }
 
@@ -54,6 +54,27 @@ export function useItemFetch() {
   }, [])
 
   return title
+}
+
+export function useAddItemForm(callback) {
+  const [inputs, setInputs] = useState({})
+
+  const handleSubmit = event => {
+    if (event) {
+      event.preventDefault()
+    }
+    callback();
+  }
+  const handleInputChange = event => {
+    event.persist()
+    setInputs(inputs => ({ ...inputs, [event.target.name]: event.target.value }))
+  }
+
+  return {
+    handleSubmit,
+    handleInputChange,
+    inputs
+  }
 }
 
 export function useExchangeContract(tokenAddress, withSignerIfPossible = true) {
