@@ -79,6 +79,18 @@ export async function getTokenExchangeAddressFromFactory(tokenAddress, library, 
   return getContract(FACTORY_ADDRESS, FACTORY_ABI, library, account).getExchange(tokenAddress)
 }
 
+export async function getItems() {
+  const API_URL = 'https://mirai-server.now.sh/books'
+  const title = await fetch(`${API_URL}?bookId=1`)
+    .then(res => res.text())
+    .then(text => {
+      if (text !== 'Not Found') return JSON.parse(text).bookTitle
+    })
+
+  return title
+} 
+
+
 // get the ether balance of an address
 export async function getEtherBalance(address, library) {
   if (!isAddress(address)) {

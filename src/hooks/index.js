@@ -8,6 +8,7 @@ import {
   getTokenExchangeAddressFromFactory,
   getEtherBalance,
   getTokenBalance,
+  getItems,
   getTokenAllowance,
   TOKEN_ADDRESSES
 } from '../utils'
@@ -40,10 +41,26 @@ export function useTokenContract(tokenAddress, withSignerIfPossible = true) {
   }, [account, library, tokenAddress, withSignerIfPossible])
 }
 
+export function useItemFetch() {
+  const [title, setTitle] = useState()
+
+  async function fetchData() {
+    const titleRes = await getItems();
+    setTitle(titleRes)
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  return title
+}
+
 export function useExchangeContract(tokenAddress, withSignerIfPossible = true) {
   const { library, account } = useWeb3Context()
 
   const [exchangeAddress, setExchangeAddress] = useState()
+
   useEffect(() => {
     if (isAddress(tokenAddress)) {
       let stale = false

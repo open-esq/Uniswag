@@ -9,7 +9,8 @@ import {
   useAddressBalance,
   useAddressAllowance,
   useExchangeReserves,
-  useExchangeAllowance
+  useExchangeAllowance,
+  useItemFetch
 } from '../../hooks'
 import Body from '../Body'
 
@@ -145,6 +146,10 @@ function calculateAmount(
 
 export default function Main() {
   const { library, account } = useWeb3Context()
+  
+  // get items
+  const items = useItemFetch();
+  console.log(items)
 
   // selected token
   const [selectedTokenSymbol, setSelectedTokenSymbol] = useState(TOKEN_SYMBOLS.ETH)
@@ -180,7 +185,6 @@ export default function Main() {
   const { reserveETH: reserveSelectedTokenETH, reserveToken: reserveSelectedTokenToken } = useExchangeReserves(
     TOKEN_ADDRESSES[selectedTokenSymbol]
   )
-
   const reserveDAIETH = useAddressBalance(exchangeContractDAI && exchangeContractDAI.address, TOKEN_ADDRESSES.ETH)
   const reserveDAIToken = useAddressBalance(exchangeContractDAI && exchangeContractDAI.address, TOKEN_ADDRESSES.DAI)
 
