@@ -47,7 +47,7 @@ export default function Body({
   }, [])
   
   async function addItem()  {
-    alert(`Item Created!
+    console.log(`Item Created!
     address: ${inputs.tokenAddress}
     description: ${inputs.itemDescription}`)
   

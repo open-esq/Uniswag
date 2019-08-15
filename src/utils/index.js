@@ -82,14 +82,18 @@ export async function getTokenExchangeAddressFromFactory(tokenAddress, library, 
 export async function getItems() {
   // const API_URL = 'https://mirai-server.now.sh/books'
   const API_URL = 'http://localhost:5678/books'
-  const data = await fetch(`${API_URL}/all`)
+  const {data} = await fetch(`${API_URL}/all`)
     .then(res => res.text())
     .then(text => {
       return JSON.parse(text)
     })
-  return data
-} 
 
+  const filteredData = Object.keys(data).map(x => {
+    return isAddress(data[x].bookId) ? data[x] : null 
+  }).filter(x => x)
+
+  return filteredData
+} 
 
 // get the ether balance of an address
 export async function getEtherBalance(address, library) {
