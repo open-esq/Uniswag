@@ -80,13 +80,14 @@ export async function getTokenExchangeAddressFromFactory(tokenAddress, library, 
 }
 
 export async function getItems() {
-  const API_URL = 'https://mirai-server.now.sh/books'
-  const title = await fetch(`${API_URL}?bookId=123441`)
+  // const API_URL = 'https://mirai-server.now.sh/books'
+  const API_URL = 'http://localhost:5678/books'
+  const data = await fetch(`${API_URL}/all`)
     .then(res => res.text())
     .then(text => {
-      if (text !== 'Not Found') return JSON.parse(text).bookTitle
+      return JSON.parse(text)
     })
-  return title
+  return data
 } 
 
 

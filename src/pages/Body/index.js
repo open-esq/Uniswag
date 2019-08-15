@@ -113,7 +113,7 @@ export default function Body({
 
   return (
     <div>
-      <Segment style={{ float: 'left', margin: '3em', width: '400px' }}>
+      <Segment style={{ textAlign: 'center', float: 'left', margin: '3em', width: '400px' }}>
 
       <Header as="h2">Add your Uniswap item</Header>
         <Form onSubmit={handleSubmit}>

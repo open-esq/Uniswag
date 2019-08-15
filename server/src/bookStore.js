@@ -28,6 +28,12 @@ const getBook = async bookId => {
   return false;
 };
 
+const getAll = async () => {
+  const dataSnap = await ref.once('value')
+  const data = await dataSnap.val()
+  return data;
+}
+
 const addBook = async ({ bookId, bookTitle, secret }) => {
   // check if the book already exists. if so, exit
   const bookRef = await ref
@@ -107,4 +113,4 @@ const retrieveImageURL = async (secret) => {
 }
 
 
-module.exports = { addBook, getBook, getSignedUrl, retrieveBookURL, retrieveImageURL };
+module.exports = { addBook, getBook, getSignedUrl, retrieveBookURL, retrieveImageURL, getAll };
