@@ -9,6 +9,7 @@ import BuyButtons from '../../components/Buttons'
 import Checkout from '../../components/Checkout'
 import { amountFormatter } from '../../utils'
 import { useAddItemForm } from '../../hooks'
+const API_URL = 'https://mirai-server.now.sh/books'
 
 function Heading({ ready, dollarPrice }) {
   const { account } = useWeb3Context()
@@ -44,11 +45,27 @@ export default function Body({
   const clearCurrentTransaction = useCallback(() => {
     _setCurrentTransaction({})
   }, [])
-  const addItem = () => {
+  
+  async function addItem()  {
     alert(`Item Created!
-      address: ${inputs.tokenAddress}
-      description: ${inputs.itemDescription}`)
-  }
+    address: ${inputs.tokenAddress}
+    description: ${inputs.itemDescription}`)
+  
+    const response = await fetch(API_URL, {
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        bookId: inputs.tokenAddress,
+        bookTitle: inputs.itemDescription,
+        secret: `SECRET RESROUCE`
+      })
+    });
+    if (response.status !== 200) throw Error(response.message);
+    const text = await response.text();
+    console.log(text)
+    return JSON.parse(text);
+  };
+  
   const { inputs, handleInputChange, handleSubmit } = useAddItemForm(addItem)
 
   const Content = (
