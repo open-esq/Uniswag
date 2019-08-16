@@ -553,7 +553,7 @@ export default function Body({item}) {
           ) : (
             ''
           )}
-          <SockCount>{reserveSOCKSToken && `${amountFormatter(reserveSOCKSToken, 18, 0)}/20 available`}</SockCount>
+          <SockCount>{reserveSOCKSToken && `${amountFormatter(reserveSOCKSToken, 18, 0)} available`}</SockCount>
         </MarketData>
       </div>
       <Checkout
