@@ -8,6 +8,7 @@ import {
   useExchangeReserves,
   useExchangeAllowance,
   useItemFetch,
+  useTokenDetails
 } from '../../hooks'
 
 import { ethers } from 'ethers'
@@ -21,15 +22,14 @@ import BuyButtons from '../../components/Buttons'
 import Checkout from '../../components/Checkout'
 import { amountFormatter } from '../../utils'
 
-function Heading({ ready, dollarPrice }) {
+function Heading({ ready, dollarPrice, tokenSymbol, tokenName }) {
   const { account } = useWeb3Context()
 
   return (
     <HeaderFrame>
       <Status ready={ready} account={account} />
-      <Title>Uni ring tokens (URING)</Title>
+      <Title>{tokenName} tokens ({tokenSymbol})</Title>
       <CurrentPrice>{dollarPrice && `$${amountFormatter(dollarPrice, 18, 2)} USD`}</CurrentPrice>
-      <Tagline>dynamically priced rings</Tagline>
     </HeaderFrame>
   )
 }
@@ -172,9 +172,6 @@ export default function Body({item}) {
   const clearCurrentTransaction = useCallback(() => {
     _setCurrentTransaction({})
   }, [])
-
-
-  //////
 
   // selected token
   const [selectedTokenSymbol, setSelectedTokenSymbol] = useState(TOKEN_SYMBOLS.ETH)
@@ -534,17 +531,17 @@ export default function Body({item}) {
 
   const Content = (
     <span>
-      <Heading ready={ready} dollarPrice={dollarPrice} />
+      <Heading ready={ready} dollarPrice={dollarPrice} tokenSymbol={item.tokenSymbol} tokenName={item.tokenName} />
       <Gallery />
       <div>
         <Intro>
-          purchasing a <b>URING</b> entitles you to 1{' '}
+          purchasing a <b>{item.tokenSymbol}</b> entitles you to 1{' '}
           <i>
             <b>real</b>
           </i>{' '}
-          limited edition uni ring, shipped anywhere in the world.
+          limited edition {item.tokenName}, shipped anywhere in the world.
         </Intro>
-        <BuyButtons balance={balanceSOCKS} />
+        <BuyButtons balance={balanceSOCKS} tokenSymbol={item.tokenSymbol} />
         <MarketData>
           {balanceSOCKS > 0 ? (
             <SockCount>

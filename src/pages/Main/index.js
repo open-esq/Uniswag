@@ -108,7 +108,7 @@ export default function Main() {
 
   // get items
   const items = useItemFetch()
-  console.log(items)
+  console.log("items", items)
 
   return (
     <span>

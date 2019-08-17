@@ -82,18 +82,32 @@ export async function getTokenExchangeAddressFromFactory(tokenAddress, library, 
 export async function getItems() {
   // const API_URL = 'https://mirai-server.now.sh/books'
   const API_URL = 'http://localhost:5678/books'
-  const {data} = await fetch(`${API_URL}/all`)
+  const { data } = await fetch(`${API_URL}/all`)
     .then(res => res.text())
     .then(text => {
       return JSON.parse(text)
     })
 
-  const filteredData = Object.keys(data).map(x => {
-    return isAddress(data[x].bookId) ? data[x] : null 
-  }).filter(x => x)
+  const filteredData = Object.keys(data)
+    .map(x => {
+      return isAddress(data[x].bookId) ? data[x] : null
+    })
+    .filter(x => x)
 
-  return filteredData
-} 
+  const dataWithTokenDetailsPromise = filteredData.map( async x => {
+    const { tokenName, tokenSymbol } = await fetch(
+      `http://api.etherscan.io/api?module=account&action=tokentx&contractaddress=${x.bookId}&apikey=YourApiKeyToken`
+    )
+      .then(res => res.text())
+      .then(text => {
+        return JSON.parse(text).result[0]
+      })
+      return {...x, tokenName, tokenSymbol }
+  })
+  const dataWithTokenDetails = await Promise.all(dataWithTokenDetailsPromise)
+
+  return dataWithTokenDetails
+}
 
 // get the ether balance of an address
 export async function getEtherBalance(address, library) {

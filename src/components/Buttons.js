@@ -44,7 +44,7 @@ export default function BuyButtons(props) {
     <BuyButtonFrame>
       <ButtonFrame
         disabled={false}
-        text={'Buy URING'}
+        text={`Buy ${props.tokenSymbol}`}
         type={'cta'}
         onClick={() => {
           handleToggleCheckout(TRADE_TYPES.BUY)
@@ -53,7 +53,7 @@ export default function BuyButtons(props) {
       <Shim />
       <ButtonFrame
         disabled={props.balance > 0 ? false : true}
-        text={'Sell URING'}
+        text={`Sell ${props.tokenSymbol}`}
         type={'cta'}
         onClick={() => {
           handleToggleCheckout(TRADE_TYPES.SELL)
