@@ -79,14 +79,17 @@ export async function getTokenExchangeAddressFromFactory(tokenAddress, library, 
   return getContract(FACTORY_ADDRESS, FACTORY_ABI, library, account).getExchange(tokenAddress)
 }
 
-export async function getItems() {
+export async function getItems(library, account) {
   // const API_URL = 'https://mirai-server.now.sh/books'
   const API_URL = 'http://localhost:5678/books'
+  console.log('making call')
   const { data } = await fetch(`${API_URL}/all`)
     .then(res => res.text())
     .then(text => {
       return JSON.parse(text)
     })
+
+  console.log('intermediate call')
 
   const filteredData = Object.keys(data)
     .map(x => {
@@ -94,18 +97,16 @@ export async function getItems() {
     })
     .filter(x => x)
 
-  const dataWithTokenDetailsPromise = filteredData.map( async x => {
-    const { tokenName, tokenSymbol } = await fetch(
-      `http://api.etherscan.io/api?module=account&action=tokentx&contractaddress=${x.bookId}&apikey=YourApiKeyToken`
-    )
-      .then(res => res.text())
-      .then(text => {
-        return JSON.parse(text).result[0]
-      })
-      return {...x, tokenName, tokenSymbol }
-  })
-  const dataWithTokenDetails = await Promise.all(dataWithTokenDetailsPromise)
+  const dataWithTokenDetailsPromise = filteredData.map(async x => {
+    const contract = getTokenContract(x.bookId, library, account)
+    const tokenName = await contract.name()
+    const tokenSymbol = await contract.symbol()
 
+    return { ...x, tokenName, tokenSymbol }
+  })
+
+  const dataWithTokenDetails = await Promise.all(dataWithTokenDetailsPromise)
+  console.log('call finished')
   return dataWithTokenDetails
 }
 

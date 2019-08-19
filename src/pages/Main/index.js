@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useWeb3Context } from 'web3-react'
 import styled from 'styled-components'
-import { Container, Segment, Form, Header } from 'semantic-ui-react'
+import { Message, Segment, Form, Header } from 'semantic-ui-react'
 import { ethers } from 'ethers'
 import { useDropzone } from 'react-dropzone'
 
@@ -84,10 +84,8 @@ function Previews(props) {
 
 export default function Main() {
   const { library, account } = useWeb3Context()
+  const [success, setSuccess] = useState(false)
   async function addItem() {
-    console.log(`Item Created!
-    address: ${inputs.tokenAddress}
-    description: ${inputs.itemDescription}`)
 
     const response = await fetch(API_URL, {
       method: 'post',
@@ -100,7 +98,11 @@ export default function Main() {
     })
     if (response.status !== 200) throw Error(response.message)
     const text = await response.text()
-    console.log(text)
+    setSuccess(true)
+    console.log(`Item Created!
+    address: ${inputs.tokenAddress}
+    description: ${inputs.itemDescription}`)
+
     return JSON.parse(text)
   }
 
@@ -108,7 +110,6 @@ export default function Main() {
 
   // get items
   const items = useItemFetch()
-  console.log("items", items)
 
   return (
     <span>
@@ -131,6 +132,13 @@ export default function Main() {
           <Previews />
           <Form.Button type="submit">Submit</Form.Button>
         </Form>
+        {console.log(success)}
+        {success ? 
+          <Message positive>
+            Item upload successful!
+          </Message>
+         : null}
+      
       </Segment>
 
       <AppWrapper>

@@ -626,7 +626,7 @@ const CurrentPrice = styled.p`
 const Intro = styled.p`
   /* padding-left: 5vw; */
   margin: 0px;
-  max-width: 300px;
+  max-width: 270px;
   line-height: 180%;
   font-weight: 500;
   text-align: left;

@@ -41,11 +41,12 @@ export function useTokenContract(tokenAddress, withSignerIfPossible = true) {
   }, [account, library, tokenAddress, withSignerIfPossible])
 }
 
-export function useItemFetch() {
+export function useItemFetch(withSignerIfPossible = true) {
   const [title, setTitle] = useState()
+  const { library, account } = useWeb3Context()
 
   async function fetchData() {
-    const titleRes = await getItems()
+    const titleRes = await getItems(library, withSignerIfPossible ? account : undefined)
     setTitle(titleRes)
   }
 
