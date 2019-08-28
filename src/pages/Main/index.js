@@ -47,6 +47,7 @@ function Previews(props) {
     accept: 'image/*',
     onDrop: acceptedFiles => {
       setFiles(acceptedFiles.map(file => Object.assign(file, {
+        file,
         preview: URL.createObjectURL(file)
       })));
     }
@@ -169,7 +170,6 @@ const AppWrapper = styled.div`
   text-align: center;
   @media only screen and (min-device-width: 768px) {
     overflow: hidden;
-    height: 100%;
   }
   @media only screen and (max-width: 640px) {
     /* padding-top: 0px; */
