@@ -34,7 +34,7 @@ const getAll = async () => {
   return data;
 }
 
-const addBook = async ({ bookId, bookTitle, secret }) => {
+const addBook = async ({ bookId, bookTitle, secret, imageHash }) => {
   // check if the book already exists. if so, exit
   const bookRef = await ref
     .orderByChild("bookId")
@@ -47,7 +47,8 @@ const addBook = async ({ bookId, bookTitle, secret }) => {
   const book = {
     bookId,
     bookTitle,
-    secret
+    secret,
+    imageHash
   };
 
   const newBook = await ref.push(book);

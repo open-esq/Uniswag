@@ -4,18 +4,25 @@ import styled from 'styled-components'
 import { Message, Segment, Form, Header } from 'semantic-ui-react'
 import { ethers } from 'ethers'
 import { useDropzone } from 'react-dropzone'
-
+import 'semantic-ui-css/semantic.min.css'
 import { TOKEN_SYMBOLS, TOKEN_ADDRESSES, ERROR_CODES } from '../../utils'
 import { useItemFetch, useAddItemForm } from '../../hooks'
 import Body from '../Body'
+import IPFS from 'ipfs-http-client'
 import {} from '../../hooks'
-const API_URL = 'https://mirai-server.now.sh/books'
+const ipfs = new IPFS({
+  host: 'ipfs.infura.io',
+  port: 5001,
+  protocol: 'https'
+})
+// const API_URL = 'https://mirai-server.now.sh/books'
+const API_URL = 'http://localhost:5678/books'
 const thumbsContainer = {
   display: 'flex',
   flexDirection: 'row',
   flexWrap: 'wrap',
   marginTop: 16
-};
+}
 
 const thumb = {
   display: 'inline-flex',
@@ -27,85 +34,95 @@ const thumb = {
   height: 100,
   padding: 4,
   boxSizing: 'border-box'
-};
+}
 
 const thumbInner = {
   display: 'flex',
   minWidth: 0,
   overflow: 'hidden'
-};
+}
 
 const img = {
   display: 'block',
   width: 'auto',
   height: '100%'
-};
-
-function Previews(props) {
-  const [files, setFiles] = useState([]);
-  const {getRootProps, getInputProps} = useDropzone({
-    accept: 'image/*',
-    onDrop: acceptedFiles => {
-      setFiles(acceptedFiles.map(file => Object.assign(file, {
-        file,
-        preview: URL.createObjectURL(file)
-      })));
-    }
-  });
-  
-  const thumbs = files.map(file => (
-    <div style={thumb} key={file.name}>
-      <div style={thumbInner}>
-        <img
-          src={file.preview}
-          style={img}
-        />
-      </div>
-    </div>
-  ));
-
-  useEffect(() => () => {
-    // Make sure to revoke the data uris to avoid memory leaks
-    files.forEach(file => URL.revokeObjectURL(file.preview));
-  }, [files]);
-
-  return (
-    <section className="container">
-      <DropzoneDiv {...getRootProps({className: 'dropzone'})}>
-        <input {...getInputProps()} />
-        <p>Upload a pic of your item</p>
-      <p>JPG only</p>
-      </DropzoneDiv>
-      <aside style={thumbsContainer}>
-        {thumbs}
-      </aside>
-    </section>
-  );
 }
+
+function Previews(props) {}
 
 export default function Main() {
   const { library, account } = useWeb3Context()
   const [success, setSuccess] = useState(false)
+
+  const [files, setFiles] = useState([])
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: 'image/*',
+    onDrop: acceptedFiles => {
+      setFiles(
+        acceptedFiles.map(file =>
+          Object.assign(file, {
+            file,
+            preview: URL.createObjectURL(file)
+          })
+        )
+      )
+    }
+  })
+
+  const thumbs = files.map(file => (
+    <div style={thumb} key={file.name}>
+      <div style={thumbInner}>
+        <img src={file.preview} style={img} />
+      </div>
+    </div>
+  ))
+
+  useEffect(
+    () => () => {
+      // Make sure to revoke the data uris to avoid memory leaks
+      files.forEach(file => URL.revokeObjectURL(file.preview))
+    },
+    [files]
+  )
+
   async function addItem() {
+    const reader = new FileReader()
+    reader.readAsArrayBuffer(files[0])
+    reader.onloadend = async () => {
+      const buf = await Buffer.from(reader.result) // Convert data into buffer
+      const ipfsHashArray = await ipfs.add(buf)
+      const ipfsHash = ipfsHashArray[0].hash
+      const url = `https://ipfs.infura.io/ipfs/${ipfsHash}`
+      console.log(`Url --> ${url}`)
 
-    const response = await fetch(API_URL, {
-      method: 'post',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        bookId: inputs.tokenAddress,
-        bookTitle: inputs.itemDescription,
-        secret: `SECRET RESROUCE`
+      await fetch(API_URL, {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bookId: inputs.tokenAddress,
+          bookTitle: inputs.itemDescription,
+          secret: 'SECRET',
+          imageHash: ipfsHash
+        })
       })
-    })
-    if (response.status !== 200) throw Error(response.message)
-    const text = await response.text()
-    setSuccess(true)
-    console.log(`Item Created!
-    address: ${inputs.tokenAddress}
-    description: ${inputs.itemDescription}`)
 
-    return JSON.parse(text)
+      setSuccess(true)
+      console.log(`Item Created!
+        address: ${inputs.tokenAddress}
+        description: ${inputs.itemDescription}`)
+    }
   }
+
+  const Dropzone = (
+    <section className="container">
+      <DropzoneDiv {...getRootProps({ className: 'dropzone' })}>
+        <input {...getInputProps()} />
+        <p>Upload a pic of your item</p>
+        <p>JPG only</p>
+      </DropzoneDiv>
+      <aside style={thumbsContainer}>{thumbs}</aside>
+    </section>
+  )
 
   const { inputs, handleInputChange, handleSubmit } = useAddItemForm(addItem)
 
@@ -130,16 +147,11 @@ export default function Main() {
             value={inputs.itemDescription}
           />
 
-          <Previews />
+          {Dropzone}
           <Form.Button type="submit">Submit</Form.Button>
         </Form>
         {console.log(success)}
-        {success ? 
-          <Message positive>
-            Item upload successful!
-          </Message>
-         : null}
-      
+        {success ? <Message positive>Item upload successful!</Message> : null}
       </Segment>
 
       <AppWrapper>

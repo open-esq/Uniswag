@@ -54,8 +54,8 @@ app.get("/books/all", async (req, res) => {
 })
 
 app.post("/books", async (req, res) => {
-  const { bookId, bookTitle, secret } = req.body;
-  const storageId = await addBook({ bookId, bookTitle, secret });
+  const { bookId, bookTitle, secret, imageHash } = req.body;
+  const storageId = await addBook({ bookId, bookTitle, secret, imageHash });
   const { bookSignedUrl, imageSignedUrl } = await getSignedUrl(storageId);
   if (bookSignedUrl && imageSignedUrl) {
     return res.status(200).send({ bookSignedUrl, imageSignedUrl });
