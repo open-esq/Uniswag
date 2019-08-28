@@ -163,7 +163,7 @@ export default function BuyAndSell({
       <CheckoutControls buying={buying}>
         <SelectToken selectedTokenSymbol={selectedTokenSymbol} setSelectedTokenSymbol={setSelectedTokenSymbol} />
         <div>↓</div>
-        <IncrementToken token />
+        <IncrementToken token={token} />
       </CheckoutControls>
       {shouldRenderUnlock ? (
         <ButtonFrame

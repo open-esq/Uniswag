@@ -97,7 +97,6 @@ export default function Checkout({
   return (
     <div>
       <CheckoutFrame isVisible={state.visible} isActiveToken={state.activeToken === token}>{renderContent()}</CheckoutFrame>
-      {console.log(`Current token is`,token, state.activeToken === token)}
       <CheckoutBackground
         onClick={() => setState(state => ({ ...state, visible: !state.visible, activetoken: null }))}
         isVisible={state.visible}
