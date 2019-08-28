@@ -42,19 +42,19 @@ export function useTokenContract(tokenAddress, withSignerIfPossible = true) {
 }
 
 export function useItemFetch(withSignerIfPossible = true) {
-  const [title, setTitle] = useState()
+  const [items, setItems] = useState()
   const { library, account } = useWeb3Context()
 
   async function fetchData() {
-    const titleRes = await getItems(library, withSignerIfPossible ? account : undefined)
-    setTitle(titleRes)
+    const itemRes = await getItems(library, withSignerIfPossible ? account : undefined)
+    setItems(itemRes)
   }
 
   useEffect(() => {
     fetchData()
   }, [])
 
-  return title
+  return items
 }
 
 export function useAddItemForm(callback) {

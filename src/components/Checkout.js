@@ -27,6 +27,7 @@ export function useCount() {
 }
 
 export default function Checkout({
+  token,
   selectedTokenSymbol,
   setSelectedTokenSymbol,
   ready,
@@ -76,6 +77,7 @@ export default function Checkout({
     } else {
       return (
         <BuyAndSell
+          token={token}
           selectedTokenSymbol={selectedTokenSymbol}
           setSelectedTokenSymbol={setSelectedTokenSymbol}
           ready={ready}
@@ -94,9 +96,10 @@ export default function Checkout({
 
   return (
     <div>
-      <CheckoutFrame isVisible={state.visible}>{renderContent()}</CheckoutFrame>
+      <CheckoutFrame isVisible={state.visible} isActiveToken={state.activeToken === token}>{renderContent()}</CheckoutFrame>
+      {console.log(`Current token is`,token, state.activeToken === token)}
       <CheckoutBackground
-        onClick={() => setState(state => ({ ...state, visible: !state.visible }))}
+        onClick={() => setState(state => ({ ...state, visible: !state.visible, activetoken: null }))}
         isVisible={state.visible}
       />
     </div>
@@ -105,10 +108,10 @@ export default function Checkout({
 
 const CheckoutFrame = styled.form`
   position: fixed;
-  bottom: ${props => (props.isVisible ? '0px' : '-100%')};
+  bottom: ${props => (props.isVisible && props.isActiveToken ? '0px' : '-100%')};
   left: 0px;
-  z-index: ${props => (props.isVisible ? '2' : '-1  ')};
-  opacity: ${props => (props.isVisible ? '1' : '0')};
+  z-index: ${props => (props.isVisible && props.isActiveToken ? '2' : '-1  ')};
+  opacity: ${props => (props.isVisible && props.isActiveToken ? '1' : '0')};
 
   transition: bottom 0.3s;
   width: 100%;
@@ -131,10 +134,10 @@ const CheckoutFrame = styled.form`
     left: 0;
     right: 0;
     border-radius: 20px 20px;
-    z-index: ${props => (props.isVisible ? '2' : '-1  ')};
-    opacity: ${props => (props.isVisible ? '1' : '0')};
+    z-index: ${props => (props.isVisible && props.isActiveToken ? '2' : '-1  ')};
+    opacity: ${props => (props.isVisible && props.isActiveToken ? '1' : '0')};
 
-    bottom: ${props => (props.isVisible ? '20%' : '-100%')};
+    bottom: ${props => (props.isVisible && props.isActiveToken ? '20%' : '-100%')};
   }
 
   p {

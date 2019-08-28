@@ -53,6 +53,7 @@ function Previews(props) {}
 export default function Main() {
   const { library, account } = useWeb3Context()
   const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [files, setFiles] = useState([])
   const { getRootProps, getInputProps } = useDropzone({
@@ -86,6 +87,7 @@ export default function Main() {
   )
 
   async function addItem() {
+    setLoading(true)
     const reader = new FileReader()
     reader.readAsArrayBuffer(files[0])
     reader.onloadend = async () => {
@@ -107,6 +109,7 @@ export default function Main() {
       })
 
       setSuccess(true)
+      setLoading(false)
       console.log(`Item Created!
         address: ${inputs.tokenAddress}
         description: ${inputs.itemDescription}`)
@@ -148,7 +151,7 @@ export default function Main() {
           />
 
           {Dropzone}
-          <Form.Button type="submit">Submit</Form.Button>
+          <Form.Button loading={loading} type="submit">Submit</Form.Button>
         </Form>
         {console.log(success)}
         {success ? <Message positive>Item upload successful!</Message> : null}

@@ -532,7 +532,7 @@ export default function Body({item}) {
   const Content = (
     <span>
       <Heading ready={ready} dollarPrice={dollarPrice} tokenSymbol={item.tokenSymbol} tokenName={item.tokenName} />
-      <Gallery />
+      <Gallery imageHash={item.imageHash}/>
       <div>
         <Intro>
           purchasing a <b>{item.tokenSymbol}</b> entitles you to 1{' '}
@@ -554,6 +554,7 @@ export default function Body({item}) {
         </MarketData>
       </div>
       <Checkout
+        token={item.tokenSymbol}
         selectedTokenSymbol={selectedTokenSymbol}
         setSelectedTokenSymbol={setSelectedTokenSymbol}
         ready={ready}

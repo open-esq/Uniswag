@@ -37,7 +37,7 @@ export default function BuyButtons(props) {
   // console.log(props.balanceSOCKS)
 
   function handleToggleCheckout(tradeType) {
-    setState(state => ({ ...state, visible: !state.visible, tradeType }))
+    setState(state => ({ ...state, visible: !state.visible, tradeType, activeToken: props.tokenSymbol}))
   }
 
   return (
