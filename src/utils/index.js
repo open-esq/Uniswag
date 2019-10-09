@@ -80,7 +80,8 @@ export async function getTokenExchangeAddressFromFactory(tokenAddress, library, 
 }
 
 export async function getItems(library, account) {
-  const API_URL = 'https://server-pntqgntoej.now.sh/books'
+  // const API_URL = 'https://mirai-server.now.sh/books'
+  const API_URL = 'http://localhost:5678/books'
   console.log('making call')
   const { data } = await fetch(`${API_URL}/all`)
     .then(res => res.text())

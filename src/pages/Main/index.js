@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useWeb3Context } from 'web3-react'
 import styled from 'styled-components'
-import { Container, Message, Segment, Form, Header } from 'semantic-ui-react'
+import { Message, Segment, Form, Header } from 'semantic-ui-react'
 import { ethers } from 'ethers'
 import { useDropzone } from 'react-dropzone'
 import 'semantic-ui-css/semantic.min.css'
@@ -15,7 +15,8 @@ const ipfs = new IPFS({
   port: 5001,
   protocol: 'https'
 })
-const API_URL = 'https://server-pntqgntoej.now.sh/books'
+// const API_URL = 'https://mirai-server.now.sh/books'
+const API_URL = 'http://localhost:5678/books'
 const thumbsContainer = {
   display: 'flex',
   flexDirection: 'row',
@@ -133,13 +134,6 @@ export default function Main() {
 
   return (
     <span>
-      <div style={{margin:"3em 3em 0em 3em"}}>
-        <Header as="h1" style={{ color: '#DC6BE5' }}>
-          Uniswag
-        </Header>
-        <Header as="h4" style={{marginTop: "0px"}}>A curated list of products listed on Uniswap</Header>
-      </div>
-
       <Segment style={{ textAlign: '-webkit-center', float: 'left', margin: '3em', width: '400px' }}>
         <Header as="h2">Add your Uniswap item</Header>
         <Form onSubmit={handleSubmit}>
@@ -157,9 +151,7 @@ export default function Main() {
           />
 
           {Dropzone}
-          <Form.Button loading={loading} type="submit">
-            Submit
-          </Form.Button>
+          <Form.Button loading={loading} type="submit">Submit</Form.Button>
         </Form>
         {console.log(success)}
         {success ? <Message positive>Item upload successful!</Message> : null}
@@ -185,6 +177,7 @@ const AppWrapper = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+  padding-top: 50px;
   overflow: scroll;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
