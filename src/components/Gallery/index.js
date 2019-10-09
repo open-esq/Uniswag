@@ -12,7 +12,10 @@ const GalleryFrame = styled.div`
   max-width: 250px;
   display: flex;
   align-items: center;
-  flex-direction: center;;
+  flex-direction: center;
+  @media only screen and (max-width: 480px) {
+    padding-left: 10vw;
+  }
 `
 
 const ImgStyle = styled.img`

@@ -62,7 +62,7 @@ export default function Confirmed({ hash, type, amount, clearCurrentTransaction 
             🧦
           </span>
         </Emoji>
-        {`You got ${amountFormatter(amount, 18, 0)} SOCKS`}
+        {`You got ${amountFormatter(amount, 18, 0)} URINGS`}
         <SubText>woo hoo</SubText>
         <EtherscanLink href={link(hash)} target="_blank" rel="noopener noreferrer">
           transaction details ↗
@@ -78,7 +78,7 @@ export default function Confirmed({ hash, type, amount, clearCurrentTransaction 
             🧦
           </span>
         </Emoji>
-        {`You sold ${amountFormatter(amount, 18, 0)} SOCKS`}
+        {`You sold ${amountFormatter(amount, 18, 0)} URINGS`}
         <SubText>nice :)</SubText>
         <EtherscanLink href={link(hash)} target="_blank" rel="noopener noreferrer">
           transaction details ↗
