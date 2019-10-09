@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useWeb3Context } from 'web3-react'
 import { useAppContext } from '../../context'
 import { ethers } from 'ethers'
+import { getCountries, getStates, getCountry } from 'country-state-picker'
 import Gallery from '../../components/Gallery'
 import BuyButtons from '../../components/Buttons'
 import Button from '../../components/Button'
@@ -40,6 +41,7 @@ export default function Body({
   const { library, account } = useWeb3Context()
   const [state, setState] = useAppContext()
   const [currentTransaction, _setCurrentTransaction] = useState({})
+  const [country, setCountry] = useState(null)
   const setCurrentTransaction = useCallback((hash, type, amount) => {
     _setCurrentTransaction({ hash, type, amount })
   }, [])
@@ -52,11 +54,9 @@ export default function Body({
   }
 
   async function redeem() {
-
     handleToggleCheckout()
 
     // Should open metamask to request signature for burning
-
   }
 
   async function burnToken() {
@@ -68,10 +68,11 @@ export default function Body({
     const overrides = {
       gasLimit: 750000
     }
-    await contract.burn('1', overrides)
+    await contract.burn('100', overrides)
   }
 
   function renderContent() {
+    console.log(getCountries())
     return (
       <div style={{ width: '100%' }}>
         <h3>Shipping Info</h3>
@@ -81,12 +82,27 @@ export default function Body({
         <Input></Input>
         <p>City</p>
         <Input></Input>
-        <p>State</p>
-        <Input></Input>
+        <p>Country</p>
+        <Select onChange={x => setCountry(x.target.value)}>
+          <option value="" selected disabled hidden>
+            Choose here
+          </option>
+          {getCountries().map(countries => {
+            return <option value={countries.code}>{countries.name}</option>
+          })}
+        </Select>
+        <p>State/Province</p>
+        <Select>
+          {country
+            ? getStates(country).map(state => {
+                return <option value={state}>{state}</option>
+              })
+            : null}
+        </Select>
         <p>Postal Code</p>
         <Input></Input>
         <i>By burning 1 URING token, you confirm shipment to this address</i>
-        <Button style={{ marginTop:"1em", width: '200px' }} onClick={() => burnToken()} text={'Confirm'} />
+        <Button style={{ marginTop: '1em', width: '200px' }} onClick={() => burnToken()} text={'Confirm'} />
       </div>
     )
   }
@@ -143,8 +159,8 @@ export default function Body({
         setCurrentTransaction={setCurrentTransaction}
         clearCurrentTransaction={clearCurrentTransaction}
       />
-      <div>`
-        <CheckoutFrame redeemVisible={state.redeemVisible}>{renderContent()}</CheckoutFrame>
+      <div>
+        `<CheckoutFrame redeemVisible={state.redeemVisible}>{renderContent()}</CheckoutFrame>
         <CheckoutBackground
           onClick={() => setState(state => ({ ...state, redeemVisible: !state.redeemVisible }))}
           redeemVisible={state.redeemVisible}
@@ -293,7 +309,7 @@ const CheckoutFrame = styled.form`
   transition: bottom 0.3s;
   width: 100%;
   margin: 0px;
-  height: 720px;
+  height: 815px;
   border-radius: 20px 20px 0px 0px;
   padding: 2rem;
   box-sizing: border-box;
@@ -340,7 +356,8 @@ const CheckoutPrompt = styled.p`
   font-size: 14px;
   margin-bottom: 0;
 `
-const Input = styled.input`
+
+const formStyle = css`
   font-size: 1rem;
   border-radius: 24px;
   margin-bottom: 1rem;
@@ -357,4 +374,12 @@ const Input = styled.input`
   border: none;
   padding: 0px 1rem 0px 1rem;
   text-align: center;
+  text-align-last: center;
+`
+const Select = styled.select`
+  ${formStyle}
+`
+
+const Input = styled.input`
+  ${formStyle}
 `
