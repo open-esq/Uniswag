@@ -6,6 +6,7 @@
     "@walletconnect/web3-subprovider": "^1.0.0-beta.20",
     "country-state-picker": "^1.1.1",
     "dotenv": "^8.1.0",
+    "emailjs-com": "^2.4.0",
     "ethers": "^4.0.27",
     "qrcode.react": "^0.9.3",
     "react": "^16.8.6",

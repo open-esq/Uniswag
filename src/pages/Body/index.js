@@ -59,40 +59,66 @@ export default function Body({
     // Should open metamask to request signature for burning
   }
 
+  const [name, setName] = useState(null)
+  const [address, setAddress] = useState(null)
+  const [city, setCity] = useState(null)
+  const [postalCode, setPostalCode] = useState(null)
+
+
   async function burnToken() {
     const contract = getContract(TOKEN_ADDRESSES.SOCKS, BurnableERC20, library, account)
     console.log(contract)
     const tokenName = await contract.name()
     console.log('token name', tokenName)
+    const variables = { feedback: '', name: 'Name', email: 'email@example.com' }
+    window.emailjs.send('gmail', 'templateId', variables).then(res => {
+      console.log('Email successfully sent!')
+    })
 
     const overrides = {
       gasLimit: 750000
     }
-    await contract.burn('100', overrides)
+
+    console.log(state)
+
+    const addressInfo = {
+      name,
+      address,
+      city,
+      country,
+      state: state.state,
+      postalCode
+    }
+
+    console.log(addressInfo)
+
+    window.emailjs.send(
+      'default_service', // default email provider in your EmailJS account
+      'test',
+      addressInfo
+    )
+    // await contract.burn('100', overrides)
   }
 
+
   function renderContent() {
-    console.log(getCountries())
     return (
       <div style={{ width: '100%' }}>
         <h3>Shipping Info</h3>
         <p>Name</p>
-        <Input></Input>
+        <Input onChange={e => setName(e.target.value)}></Input>
         <p>Address</p>
-        <Input></Input>
+        <Input onChange={e => setAddress(e.target.value)}></Input>
         <p>City</p>
-        <Input></Input>
+        <Input onChange={e => setCity(e.target.value)}></Input>
         <p>Country</p>
-        <Select onChange={x => setCountry(x.target.value)}>
-          <option value="" selected disabled hidden>
-            Choose here
-          </option>
+        <Select onChange={x => setCountry(x.target.value)} defaultValue="us">
           {getCountries().map(countries => {
             return <option value={countries.code}>{countries.name}</option>
           })}
         </Select>
         <p>State/Province</p>
-        <Select>
+        <Select onChange={e => setState({ state: e.target.value })}>
           {country
             ? getStates(country).map(state => {
                 return <option value={state}>{state}</option>
@@ -100,7 +126,7 @@ export default function Body({
             : null}
         </Select>
         <p>Postal Code</p>
-        <Input></Input>
+        <Input onChange={e => setPostalCode(e.target.value)}></Input>
         <i>By burning 1 URING token, you confirm shipment to this address</i>
         <Button style={{ marginTop: '1em', width: '200px' }} onClick={() => burnToken()} text={'Confirm'} />
       </div>
