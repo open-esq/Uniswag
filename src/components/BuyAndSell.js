@@ -178,7 +178,7 @@ export default function BuyAndSell({
         <ButtonFrame
           className="button"
           disabled={validationError !== null}
-          text={account === null ? 'Connect Wallet' : buying ? 'Buy SOCKS' : 'Sell SOCKS'}
+          text={account === null ? 'Connect Wallet' : buying ? 'Buy URINGS' : 'Sell URINGS'}
           type={'cta'}
           onClick={() => {
             if (account === null) {

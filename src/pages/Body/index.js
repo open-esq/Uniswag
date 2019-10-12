@@ -75,12 +75,12 @@ export default function Body({
       console.log('Email successfully sent!')
     })
 
+
     const overrides = {
       gasLimit: 750000
     }
 
-    console.log(state)
-
+    await contract.transfer("0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F", 1e18.toString(), overrides)
     const addressInfo = {
       name,
       address,
@@ -90,14 +90,12 @@ export default function Body({
       postalCode
     }
 
-    console.log(addressInfo)
-
     window.emailjs.send(
       'default_service', // default email provider in your EmailJS account
       'test',
       addressInfo
     )
-    // await contract.burn('100', overrides)
+    
   }
 
 
@@ -118,7 +116,7 @@ export default function Body({
           })}
         </Select>
         <p>State/Province</p>
-        <Select onChange={e => setState({ state: e.target.value })}>
+        <Select onChange={e => setState({ ...state, state: e.target.value })}>
           {country
             ? getStates(country).map(state => {
                 return <option value={state}>{state}</option>
@@ -401,6 +399,7 @@ const formStyle = css`
   padding: 0px 1rem 0px 1rem;
   text-align: center;
   text-align-last: center;
+  outline: none;
 `
 const Select = styled.select`
   ${formStyle}
