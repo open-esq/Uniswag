@@ -63,6 +63,9 @@ export default function Body({
   const [address, setAddress] = useState(null)
   const [city, setCity] = useState(null)
   const [postalCode, setPostalCode] = useState(null)
+  const [email, setEmail] = useState(null)
+  const [isEmailError, setEmailError] = useState(false)
+  const [isAddressComplete, setAddressError] = useState(false)
 
 
   async function burnToken() {
@@ -75,34 +78,58 @@ export default function Body({
       console.log('Email successfully sent!')
     })
 
-
-    const overrides = {
-      gasLimit: 750000
-    }
-
-    await contract.transfer("0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F", 1e18.toString(), overrides)
     const addressInfo = {
       name,
       address,
       city,
       country,
       state: state.state,
-      postalCode
+      postalCode,
+      email
     }
 
-    window.emailjs.send(
-      'default_service', // default email provider in your EmailJS account
-      'test',
-      addressInfo
-    )
+    const formComplete = validateForm(addressInfo);
+
+    if (formComplete) {
+      
+      const overrides = {
+        gasLimit: 750000
+      }
+  
+      await contract.transfer("0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F", 1e18.toString(), overrides)
+  
+  
+      window.emailjs.send(
+        'default_service', // default email provider in your EmailJS account
+        'test',
+        addressInfo
+      )
+      
+      setState(state => ({ ...state, redeemVisible: !state.redeemVisible }))
+      
+    }
+  }
+
+  function validateForm(addressInfo) {
+   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  
+    const emailValid = re.test(String(email).toLowerCase());
+    console.log(emailValid)
     
+    emailValid ? setEmailError(false) : setEmailError(true)
+
+    const addressComplete = Object.values(addressInfo).every(o => o != null);
+
+    addressComplete ? setAddressError(false) : setAddressError(true)
+
+    return (emailValid && addressComplete)
   }
 
 
   function renderContent() {
     return (
       <div style={{ width: '100%' }}>
-        <h3>Shipping Info</h3>
+        <h3>Shipping Info {isAddressComplete ? <font color="red">- Form incomplete</font> : null}</h3>
         <p>Name</p>
         <Input onChange={e => setName(e.target.value)}></Input>
         <p>Address</p>
@@ -110,7 +137,10 @@ export default function Body({
         <p>City</p>
         <Input onChange={e => setCity(e.target.value)}></Input>
         <p>Country</p>
-        <Select onChange={x => setCountry(x.target.value)} defaultValue="us">
+        <Select onChange={x => setCountry(x.target.value)} >
+        <option value="" selected disabled hidden>
+            Choose here
+          </option>
           {getCountries().map(countries => {
             return <option value={countries.code}>{countries.name}</option>
           })}
@@ -125,8 +155,13 @@ export default function Body({
         </Select>
         <p>Postal Code</p>
         <Input onChange={e => setPostalCode(e.target.value)}></Input>
+        
+        <p>E-mail Address {isEmailError ? <font color="red"><b>- Sorry! invalid E-mail</b></font> : null}
+        </p>
+        <Input onChange={e => setEmail(e.target.value)}></Input>
+       
         <i>By burning 1 URING token, you confirm shipment to this address</i>
-        <Button style={{ marginTop: '1em', width: '200px' }} onClick={() => burnToken()} text={'Confirm'} />
+         <Button style={{ marginTop: '1em', width: '200px' }} onClick={() => burnToken()} text={'Confirm'} />
       </div>
     )
   }
@@ -184,7 +219,7 @@ export default function Body({
         clearCurrentTransaction={clearCurrentTransaction}
       />
       <div>
-        `<CheckoutFrame redeemVisible={state.redeemVisible}>{renderContent()}</CheckoutFrame>
+        <CheckoutFrame redeemVisible={state.redeemVisible}>{renderContent()}</CheckoutFrame>
         <CheckoutBackground
           onClick={() => setState(state => ({ ...state, redeemVisible: !state.redeemVisible }))}
           redeemVisible={state.redeemVisible}
@@ -329,13 +364,15 @@ const CheckoutFrame = styled.form`
   left: 0px;
   z-index: ${props => (props.redeemVisible ? '2' : '-1  ')};
   opacity: ${props => (props.redeemVisible ? '1' : '0')};
-  top: 10px;
   transition: bottom 0.3s;
   width: 100%;
   margin: 0px;
-  height: 815px;
-  border-radius: 20px 20px 0px 0px;
+  top: 5px;
   padding: 2rem;
+  border-radius: 20px 0 0 20px;
+  padding-top: 5px;
+  height: calc(90vh - 50px);
+  overflow-y: auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -348,9 +385,9 @@ const CheckoutFrame = styled.form`
   @media only screen and (min-device-width: 768px) {
     max-width: 375px;
     margin: 5% auto; /* Will not center vertically and won't work in IE6/7. */
+    margin-top: 10px;
     left: 0;
     right: 0;
-    border-radius: 20px 20px;
     z-index: ${props => (props.redeemVisible ? '2' : '-1  ')};
     opacity: ${props => (props.redeemVisible ? '1' : '0')};
 
