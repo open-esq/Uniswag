@@ -1,10 +1,8 @@
-import React, { useState, useCallback } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import { useWeb3Context } from 'web3-react'
 import { useAppContext } from '../../context'
-import { ethers } from 'ethers'
-import { Cube } from 'styled-loaders'
-import LoadingDots from "../../components/LoadingDots"
+import LoadingDots from '../../components/LoadingDots'
 import { getCountries, getStates, getCountry } from 'country-state-picker'
 import Gallery from '../../components/Gallery'
 import BuyButtons from '../../components/Buttons'
@@ -69,12 +67,17 @@ export default function Body({
   const [isEmailError, setEmailError] = useState(false)
   const [isAddressComplete, setAddressError] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isSuccess, setSuccess] = useState(false)
 
+  const successRef = useRef(null)
+  useEffect(() => {
+    if (isSuccess)
+      window.scrollTo({ behavior: "smooth", top: successRef.current.offsetTop });
+  }, [isSuccess]);
+  
   async function burnToken() {
-
-
-    setLoading(true) 
-
+    
+    setSuccess(true)
     const contract = getContract(TOKEN_ADDRESSES.SOCKS, BurnableERC20, library, account)
     console.log(contract)
     const tokenName = await contract.name()
@@ -90,49 +93,50 @@ export default function Body({
       email
     }
 
-    const formComplete = validateForm(addressInfo);
+    const formComplete = validateForm(addressInfo)
 
     if (formComplete) {
-
+      setLoading(true)
       const overrides = {
         gasLimit: 750000
       }
-  
-      const res = await contract.transfer("0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F", 8e18.toString(), overrides)
+
+      const res = await contract.transfer('0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F', (8e18).toString(), overrides)
 
       const txReceipt = await library.getTransactionReceipt(res.hash)
-  
+
       console.log(res)
       console.log(txReceipt)
-      
-      // Successful contract call to burn token
-      if(txReceipt.status === 1) {
 
+      // Successful contract call to burn token
+      if (txReceipt.status === 1) {
         window.emailjs.send(
           'default_service', // default email provider in your EmailJS account
           'test',
           addressInfo
         )
-      }
 
+        setSuccess(true)
+      } else {
+        // TODO
+      }
     }
   }
 
   function validateForm(addressInfo) {
-   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  
-    const emailValid = re.test(String(email).toLowerCase());
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+    const emailValid = re.test(String(email).toLowerCase())
     console.log(emailValid)
-    
+
     emailValid ? setEmailError(false) : setEmailError(true)
 
-    const addressComplete = Object.values(addressInfo).every(o => o != null);
+    const addressComplete = Object.values(addressInfo).every(o => o != null)
 
     addressComplete ? setAddressError(false) : setAddressError(true)
 
-    return (emailValid && addressComplete)
+    return emailValid && addressComplete
   }
-
 
   function renderContent() {
     return (
@@ -145,8 +149,8 @@ export default function Body({
         <p>City</p>
         <Input onChange={e => setCity(e.target.value)}></Input>
         <p>Country</p>
-        <Select onChange={x => setCountry(x.target.value)} >
-        <option value="" selected disabled hidden>
+        <Select onChange={x => setCountry(x.target.value)}>
+          <option value="" selected disabled hidden>
             Choose here
           </option>
           {getCountries().map(countries => {
@@ -163,13 +167,25 @@ export default function Body({
         </Select>
         <p>Postal Code</p>
         <Input onChange={e => setPostalCode(e.target.value)}></Input>
-        
-        <p>E-mail Address {isEmailError ? <font color="red"><b>- Sorry! invalid E-mail</b></font> : null}
+
+        <p>
+          E-mail Address{' '}
+          {isEmailError ? (
+            <font color="red">
+              <b>- Sorry! invalid E-mail</b>
+            </font>
+          ) : null}
         </p>
         <Input onChange={e => setEmail(e.target.value)}></Input>
-       
+
         <i>By burning 1 URING token, you confirm shipment to this address</i>
-         <Button style={{ marginTop: '1em', width: '200px' }} onClick={() => burnToken()} text={loading ? <LoadingDots/> : 'Confirm'} />
+        <Button
+          disabled={isSuccess ? true : null}
+          style={{ marginTop: '1em', width: '200px' }}
+          onClick={() => burnToken()}
+          text={loading ? <LoadingDots /> : 'Confirm'}
+        />
+        <Success ref={successRef} visible={isSuccess}>Redemption Successful! An e-mail confirmation has been sent</Success>
       </div>
     )
   }
@@ -306,6 +322,12 @@ const Tagline = styled.p`
   margin-top: 2rem;
 `
 
+const Success = styled.p`
+  margin-top: 10px;
+  color: ${props => props.theme.uniswapPink}
+  display: ${props => (props.visible ? 'block' : 'none')}
+`
+
 const CurrentPrice = styled.p`
   font-weight: 700;
   margin: 0px;
@@ -402,9 +424,7 @@ const CheckoutFrame = styled.form`
     bottom: ${props => (props.redeemVisible ? '20%' : '-100%')};
   }
 
-  p {
-    margin-top: 0px;
-  }
+
 `
 
 const CheckoutBackground = styled.div`
@@ -419,11 +439,6 @@ const CheckoutBackground = styled.div`
   background-color: ${props => props.theme.black};
   transition: opacity 0.3s;
   pointer-events: ${props => (props.redeemVisible ? 'all' : 'none')};
-`
-const CheckoutPrompt = styled.p`
-  font-weight: 400;
-  font-size: 14px;
-  margin-bottom: 0;
 `
 
 const formStyle = css`

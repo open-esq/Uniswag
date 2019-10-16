@@ -26,7 +26,7 @@ const Dot = styled.div`
 export default function LoadingDots() {
   return (
     <DotWrapper>
-      Please Wait{" "}
+      Please Wait{"  "}
       <Dot delay="0s" />
       <Dot delay=".1s" />
       <Dot delay=".2s" />
