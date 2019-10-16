@@ -16,6 +16,7 @@ const ButtonFrame = styled.button`
   line-height: 1;
   border-width: 1px;
   border: none;
+  outline: none;
   cursor: pointer;
   opacity: ${props => (props.disabled ? 0.2 : 1)};
   pointer-events: ${props => (props.disabled ? 'none' : 'auto')};

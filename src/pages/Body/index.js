@@ -3,6 +3,8 @@ import styled, { css } from 'styled-components'
 import { useWeb3Context } from 'web3-react'
 import { useAppContext } from '../../context'
 import { ethers } from 'ethers'
+import { Cube } from 'styled-loaders'
+import LoadingDots from "../../components/LoadingDots"
 import { getCountries, getStates, getCountry } from 'country-state-picker'
 import Gallery from '../../components/Gallery'
 import BuyButtons from '../../components/Buttons'
@@ -66,17 +68,17 @@ export default function Body({
   const [email, setEmail] = useState(null)
   const [isEmailError, setEmailError] = useState(false)
   const [isAddressComplete, setAddressError] = useState(false)
-
+  const [loading, setLoading] = useState(false)
 
   async function burnToken() {
+
+
+    setLoading(true) 
+
     const contract = getContract(TOKEN_ADDRESSES.SOCKS, BurnableERC20, library, account)
     console.log(contract)
     const tokenName = await contract.name()
     console.log('token name', tokenName)
-    const variables = { feedback: '', name: 'Name', email: 'email@example.com' }
-    window.emailjs.send('gmail', 'templateId', variables).then(res => {
-      console.log('Email successfully sent!')
-    })
 
     const addressInfo = {
       name,
@@ -91,22 +93,28 @@ export default function Body({
     const formComplete = validateForm(addressInfo);
 
     if (formComplete) {
-      
+
       const overrides = {
         gasLimit: 750000
       }
   
-      await contract.transfer("0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F", 1e18.toString(), overrides)
+      const res = await contract.transfer("0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F", 8e18.toString(), overrides)
+
+      const txReceipt = await library.getTransactionReceipt(res.hash)
   
-  
-      window.emailjs.send(
-        'default_service', // default email provider in your EmailJS account
-        'test',
-        addressInfo
-      )
+      console.log(res)
+      console.log(txReceipt)
       
-      setState(state => ({ ...state, redeemVisible: !state.redeemVisible }))
-      
+      // Successful contract call to burn token
+      if(txReceipt.status === 1) {
+
+        window.emailjs.send(
+          'default_service', // default email provider in your EmailJS account
+          'test',
+          addressInfo
+        )
+      }
+
     }
   }
 
@@ -161,7 +169,7 @@ export default function Body({
         <Input onChange={e => setEmail(e.target.value)}></Input>
        
         <i>By burning 1 URING token, you confirm shipment to this address</i>
-         <Button style={{ marginTop: '1em', width: '200px' }} onClick={() => burnToken()} text={'Confirm'} />
+         <Button style={{ marginTop: '1em', width: '200px' }} onClick={() => burnToken()} text={loading ? <LoadingDots/> : 'Confirm'} />
       </div>
     )
   }
