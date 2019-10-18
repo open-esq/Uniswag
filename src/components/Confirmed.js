@@ -58,11 +58,11 @@ export default function Confirmed({ hash, type, amount, clearCurrentTransaction 
       <ConfirmedFrame>
         <Close onClick={() => setState(state => ({ ...state, visible: !state.visible }))}>✗</Close>
         <Emoji>
-          <span role="img" aria-label="sock">
-            🧦
+          <span role="img" aria-label="ring">
+            💍
           </span>
         </Emoji>
-        {`You got ${amountFormatter(amount, 18, 0)} SOCKS`}
+        {`You got ${amountFormatter(amount, 18, 0)} URING`}
         <SubText>woo hoo</SubText>
         <EtherscanLink href={link(hash)} target="_blank" rel="noopener noreferrer">
           transaction details ↗
@@ -74,11 +74,11 @@ export default function Confirmed({ hash, type, amount, clearCurrentTransaction 
       <ConfirmedFrame>
         <Close onClick={() => setState(state => ({ ...state, visible: !state.visible }))}>✗</Close>
         <Emoji>
-          <span role="img" aria-label="sock">
-            🧦
+          <span role="img" aria-label="ring">
+            💍
           </span>
         </Emoji>
-        {`You sold ${amountFormatter(amount, 18, 0)} SOCKS`}
+        {`You sold ${amountFormatter(amount, 18, 0)} URING`}
         <SubText>nice :)</SubText>
         <EtherscanLink href={link(hash)} target="_blank" rel="noopener noreferrer">
           transaction details ↗
