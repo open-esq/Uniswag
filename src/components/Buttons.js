@@ -34,7 +34,7 @@ const Shim = styled.div`
 export default function BuyButtons(props) {
   const [, setState] = useAppContext()
 
-  // console.log(props.balanceSOCKS)
+  // console.log(props.balanceURING)
 
   function handleToggleCheckout(tradeType) {
     setState(state => ({ ...state, visible: !state.visible, tradeType, activeToken: props.tokenSymbol}))
