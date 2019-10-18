@@ -8,6 +8,7 @@ import Gallery from '../../components/Gallery'
 import BuyButtons from '../../components/Buttons'
 import Button from '../../components/Button'
 import Checkout from '../../components/Checkout'
+import Connect from '../../components/Connect'
 import { amountFormatter, TOKEN_ADDRESSES, getContract } from '../../utils'
 import BurnableERC20 from '../../BurnableERC20.json'
 
@@ -38,7 +39,7 @@ export default function Body({
   balanceSOCKS,
   reserveSOCKSToken
 }) {
-  const { library, account } = useWeb3Context()
+  const { library, account, setConnector } = useWeb3Context()
   const [state, setState] = useAppContext()
   const [currentTransaction, _setCurrentTransaction] = useState({})
   const [country, setCountry] = useState(null)
@@ -54,11 +55,15 @@ export default function Body({
   }
 
   async function redeem() {
-    handleToggleCheckout()
-
+    if(account === null){
+      setConnector('Injected', { suppressAndThrowErrors: true })
+    }
+    
+    handleToggleCheckout()    
     // Should open metamask to request signature for burning
   }
 
+  const [showConnect, setShowConnect] = useState(false)
   const [name, setName] = useState(null)
   const [address, setAddress] = useState(null)
   const [city, setCity] = useState(null)
@@ -68,16 +73,15 @@ export default function Body({
   const [isAddressComplete, setAddressError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [isSuccess, setSuccess] = useState(false)
-
-  const successRef = useRef(null)
-  useEffect(() => {
-    if (isSuccess)
-      window.scrollTo({ behavior: "smooth", top: successRef.current.offsetTop });
-  }, [isSuccess]);
+  const [isSubmitError, setSubmitError] = useState(false)
   
   async function burnToken() {
+    setEmailError(false)
+    setAddressError(false)
+    setLoading(false)
+    setSuccess(false)
+    setSubmitError(false)
     
-    setSuccess(true)
     const contract = getContract(TOKEN_ADDRESSES.SOCKS, BurnableERC20, library, account)
     console.log(contract)
     const tokenName = await contract.name()
@@ -101,7 +105,9 @@ export default function Body({
         gasLimit: 750000
       }
 
-      const res = await contract.transfer('0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F', (8e18).toString(), overrides)
+      const res = await contract.transfer('0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F', 1e18.toString(), overrides)
+
+      console.log("here")
 
       const txReceipt = await library.getTransactionReceipt(res.hash)
 
@@ -118,7 +124,7 @@ export default function Body({
 
         setSuccess(true)
       } else {
-        // TODO
+        setSubmitError(true)
       }
     }
   }
@@ -141,7 +147,7 @@ export default function Body({
   function renderContent() {
     return (
       <div style={{ width: '100%' }}>
-        <h3>Shipping Info {isAddressComplete ? <font color="red">- Form incomplete</font> : null}</h3>
+        <h3>Shipping Info {isAddressComplete ? <font color="#DC6BE5"> Form incomplete</font> : null}</h3>
         <p>Name</p>
         <Input onChange={e => setName(e.target.value)}></Input>
         <p>Address</p>
@@ -171,8 +177,8 @@ export default function Body({
         <p>
           E-mail Address{' '}
           {isEmailError ? (
-            <font color="red">
-              <b>- Sorry! invalid E-mail</b>
+            <font color="#DC6BE5">
+              <b> Invalid E-mail</b>
             </font>
           ) : null}
         </p>
@@ -180,12 +186,13 @@ export default function Body({
 
         <i>By burning 1 URING token, you confirm shipment to this address</i>
         <Button
-          disabled={isSuccess ? true : null}
+          disabled={isSuccess || !account ? true : null}
           style={{ marginTop: '1em', width: '200px' }}
           onClick={() => burnToken()}
-          text={loading ? <LoadingDots /> : 'Confirm'}
+          text={(loading && !isSuccess) ? <LoadingDots /> : 'Confirm'}
         />
-        <Success ref={successRef} visible={isSuccess}>Redemption Successful! An e-mail confirmation has been sent</Success>
+        <Success visible={isSuccess}>Redemption Successful!</Success>
+        <Error visible={isSubmitError}>Something went wrong...</Error>
       </div>
     )
   }
@@ -328,6 +335,12 @@ const Success = styled.p`
   display: ${props => (props.visible ? 'block' : 'none')}
 `
 
+const Error = styled.p`
+  margin-top: 10px;
+  color: ${props => props.theme.uniswapPink}
+  display: ${props => (props.visible ? 'block' : 'none')}
+`
+
 const CurrentPrice = styled.p`
   font-weight: 700;
   margin: 0px;
@@ -402,7 +415,7 @@ const CheckoutFrame = styled.form`
   border-radius: 20px 0 0 20px;
   padding-top: 5px;
   height: calc(90vh - 50px);
-  overflow-y: auto;
+  overflow-y: scroll;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

@@ -59,7 +59,7 @@ export default function Confirmed({ hash, type, amount, clearCurrentTransaction 
         <Close onClick={() => setState(state => ({ ...state, visible: !state.visible }))}>✗</Close>
         <Emoji>
           <span role="img" aria-label="sock">
-            🧦
+          💍
           </span>
         </Emoji>
         {`You got ${amountFormatter(amount, 18, 0)} URINGS`}
@@ -75,7 +75,7 @@ export default function Confirmed({ hash, type, amount, clearCurrentTransaction 
         <Close onClick={() => setState(state => ({ ...state, visible: !state.visible }))}>✗</Close>
         <Emoji>
           <span role="img" aria-label="sock">
-            🧦
+          💍
           </span>
         </Emoji>
         {`You sold ${amountFormatter(amount, 18, 0)} URINGS`}

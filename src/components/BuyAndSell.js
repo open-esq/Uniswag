@@ -144,7 +144,7 @@ export default function BuyAndSell({
 
     return (
       <>
-        <p>{state.count} SOCKS</p>
+        <p>{state.count} URINGS</p>
         {conditionalRender}
       </>
     )
@@ -166,7 +166,7 @@ export default function BuyAndSell({
       </CheckoutControls>
       {shouldRenderUnlock ? (
         <ButtonFrame
-          text={`Unlock ${buying ? selectedTokenSymbol : 'SOCKS'}`}
+          text={`Unlock ${buying ? selectedTokenSymbol : 'URINGS'}`}
           type={'cta'}
           onClick={() => {
             unlock(buying).then(({ hash }) => {
