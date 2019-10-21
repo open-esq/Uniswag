@@ -74,6 +74,13 @@ export default function Body({
   const [loading, setLoading] = useState(false)
   const [isSuccess, setSuccess] = useState(false)
   const [isSubmitError, setSubmitError] = useState(false)
+
+  const successRef = useRef()
+  useEffect(() => {
+    if(isSuccess) {
+      successRef.current.scrollIntoView({behavior: "smooth"})
+    }
+  }, [isSuccess])
   
   async function burnToken() {
     setEmailError(false)
@@ -191,7 +198,7 @@ export default function Body({
           onClick={() => burnToken()}
           text={(loading && !isSuccess) ? <LoadingDots /> : 'Confirm'}
         />
-        <Success visible={isSuccess}>Redemption Successful!</Success>
+        <Success ref={successRef} visible={isSuccess}>Redemption Successful!</Success>
         <Error visible={isSubmitError}>Something went wrong...</Error>
       </div>
     )
@@ -331,12 +338,14 @@ const Tagline = styled.p`
 
 const Success = styled.p`
   margin-top: 10px;
+  font-weight: bold;
   color: ${props => props.theme.uniswapPink}
   display: ${props => (props.visible ? 'block' : 'none')}
 `
 
 const Error = styled.p`
   margin-top: 10px;
+  font-weight: bold;
   color: ${props => props.theme.uniswapPink}
   display: ${props => (props.visible ? 'block' : 'none')}
 `
