@@ -105,7 +105,7 @@ export default function Redeem() {
           Choose here
         </option>
         {getCountries().map(countries => {
-          return <option value={countries.code}>{countries.name}</option>
+          return <option key={countries.code} value={countries.code}>{countries.name}</option>
         })}
       </Select>
       <p>State/Province</p>
