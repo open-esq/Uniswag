@@ -7,7 +7,7 @@ import BuyButtons from '../../components/Buttons'
 import Button from '../../components/Button'
 import Checkout from '../../components/Checkout'
 import Redeem from '../../components/Redeem'
-import { amountFormatter, TOKEN_ADDRESSES, getContract } from '../../utils'
+import { amountFormatter } from '../../utils'
 
 function Header({ ready, dollarPrice }) {
   const { account } = useWeb3Context()
@@ -36,7 +36,7 @@ export default function Body({
   balanceSOCKS,
   reserveSOCKSToken
 }) {
-  const { library, account, setConnector } = useWeb3Context()
+  const { account, setConnector } = useWeb3Context()
   const [state, setState] = useAppContext()
   const [currentTransaction, _setCurrentTransaction] = useState({})
   const setCurrentTransaction = useCallback((hash, type, amount) => {
@@ -56,7 +56,6 @@ export default function Body({
     }
 
     handleToggleCheckout()
-    // Should open metamask to request signature for burning
   }
 
   function renderContent() {
@@ -319,32 +318,4 @@ const CheckoutBackground = styled.div`
   background-color: ${props => props.theme.black};
   transition: opacity 0.3s;
   pointer-events: ${props => (props.redeemVisible ? 'all' : 'none')};
-`
-
-const formStyle = css`
-  font-size: 1rem;
-  border-radius: 24px;
-  margin-bottom: 1rem;
-  font-family: sans-serif;
-  font-weight: 700;
-  width: 100%;
-  height: 48px;
-  box-sizing: border-box;
-  appearance: none;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: #fff;
-  border: none;
-  padding: 0px 1rem 0px 1rem;
-  text-align: center;
-  text-align-last: center;
-  outline: none;
-`
-const Select = styled.select`
-  ${formStyle}
-`
-
-const Input = styled.input`
-  ${formStyle}
 `

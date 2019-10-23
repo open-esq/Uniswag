@@ -17,17 +17,21 @@ export default function Redeem() {
   const [postalCode, setPostalCode] = useState(null)
   const [email, setEmail] = useState(null)
   const [isEmailError, setEmailError] = useState(false)
-  const [isAddressComplete, setAddressError] = useState(false)
+  const [isAddressError, setAddressError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [isSuccess, setSuccess] = useState(false)
   const [isSubmitError, setSubmitError] = useState(false)
 
   const successRef = useRef()
+  const incompleteRef = useRef()
   useEffect(() => {
     if (isSuccess) {
       successRef.current.scrollIntoView({ behavior: 'smooth' })
     }
-  }, [isSuccess])
+    if (isAddressError) {
+      incompleteRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [isSuccess, isAddressError])
 
   async function redeemSubmit() {
     setEmailError(false)
@@ -51,23 +55,19 @@ export default function Redeem() {
 
     if (formComplete) {
       setLoading(true)
-      const overrides = {
-        gasLimit: 750000
-      }
-
+  
       // Burning token by sending it back to pool of URING tokens not on Uniswap
-      const res = await contract.transfer('0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F', (1e18).toString(), overrides)
+      const res = await contract.transfer('0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F', (1e18).toString(), {
+        gasLimit: 750000
+      })
 
       const txReceipt = await library.getTransactionReceipt(res.hash)
-
-      console.log(res)
-      console.log(txReceipt)
 
       // Successful contract call to burn token
       if (txReceipt.status === 1) {
         window.emailjs.send(
           'default_service', // default email provider in your EmailJS account
-          'test',
+          'uring_redeem',
           addressInfo
         )
         setSuccess(true)
@@ -81,11 +81,9 @@ export default function Redeem() {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
     const emailValid = re.test(String(email).toLowerCase())
-    console.log(emailValid)
-
     emailValid ? setEmailError(false) : setEmailError(true)
 
-    const addressComplete = Object.values(addressInfo).every(o => o != null)
+    const addressComplete = Object.values(addressInfo).every(o => o != null && o !== '')
 
     addressComplete ? setAddressError(false) : setAddressError(true)
 
@@ -93,8 +91,8 @@ export default function Redeem() {
   }
 
   return (
-    <div style={{ width: '100%' }}>
-      <h3>Shipping Info {isAddressComplete ? <font color="#DC6BE5"> Form incomplete</font> : null}</h3>
+    <div ref={incompleteRef} style={{ width: '100%' }}>
+      <h3>Shipping Info {isAddressError ? <font color="#DC6BE5"> Form incomplete</font> : null}</h3>
       <p>Name</p>
       <Input onChange={e => setName(e.target.value)}></Input>
       <p>Address</p>
@@ -133,7 +131,7 @@ export default function Redeem() {
 
       <i>By burning 1 URING token, you confirm shipment to this address</i>
       <Button
-        disabled={isSuccess || !account ? true : null}
+        disabled={isSuccess || !account || loading ? true : null}
         style={{ marginTop: '1em', width: '200px' }}
         onClick={() => redeemSubmit()}
         text={loading && !isSuccess ? <LoadingDots /> : 'Confirm'}
