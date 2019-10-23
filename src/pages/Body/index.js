@@ -1,16 +1,13 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import { useWeb3Context } from 'web3-react'
 import { useAppContext } from '../../context'
-import LoadingDots from '../../components/LoadingDots'
-import { getCountries, getStates, getCountry } from 'country-state-picker'
 import Gallery from '../../components/Gallery'
 import BuyButtons from '../../components/Buttons'
 import Button from '../../components/Button'
 import Checkout from '../../components/Checkout'
-import Connect from '../../components/Connect'
+import Redeem from '../../components/Redeem'
 import { amountFormatter, TOKEN_ADDRESSES, getContract } from '../../utils'
-import BurnableERC20 from '../../BurnableERC20.json'
 
 function Header({ ready, dollarPrice }) {
   const { account } = useWeb3Context()
@@ -42,7 +39,6 @@ export default function Body({
   const { library, account, setConnector } = useWeb3Context()
   const [state, setState] = useAppContext()
   const [currentTransaction, _setCurrentTransaction] = useState({})
-  const [country, setCountry] = useState(null)
   const setCurrentTransaction = useCallback((hash, type, amount) => {
     _setCurrentTransaction({ hash, type, amount })
   }, [])
@@ -55,157 +51,24 @@ export default function Body({
   }
 
   async function redeem() {
-    if(account === null){
+    if (account === null) {
       setConnector('Injected', { suppressAndThrowErrors: true })
     }
-    
-    handleToggleCheckout()    
+
+    handleToggleCheckout()
     // Should open metamask to request signature for burning
-  }
-
-  const [showConnect, setShowConnect] = useState(false)
-  const [name, setName] = useState(null)
-  const [address, setAddress] = useState(null)
-  const [city, setCity] = useState(null)
-  const [postalCode, setPostalCode] = useState(null)
-  const [email, setEmail] = useState(null)
-  const [isEmailError, setEmailError] = useState(false)
-  const [isAddressComplete, setAddressError] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [isSuccess, setSuccess] = useState(false)
-  const [isSubmitError, setSubmitError] = useState(false)
-
-  const successRef = useRef()
-  useEffect(() => {
-    if(isSuccess) {
-      successRef.current.scrollIntoView({behavior: "smooth"})
-    }
-  }, [isSuccess])
-  
-  async function burnToken() {
-    setEmailError(false)
-    setAddressError(false)
-    setLoading(false)
-    setSuccess(false)
-    setSubmitError(false)
-    
-    const contract = getContract(TOKEN_ADDRESSES.SOCKS, BurnableERC20, library, account)
-    console.log(contract)
-    const tokenName = await contract.name()
-    console.log('token name', tokenName)
-
-    const addressInfo = {
-      name,
-      address,
-      city,
-      country,
-      state: state.state,
-      postalCode,
-      email
-    }
-
-    const formComplete = validateForm(addressInfo)
-
-    if (formComplete) {
-      setLoading(true)
-      const overrides = {
-        gasLimit: 750000
-      }
-
-      const res = await contract.transfer('0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F', 1e18.toString(), overrides)
-
-      console.log("here")
-
-      const txReceipt = await library.getTransactionReceipt(res.hash)
-
-      console.log(res)
-      console.log(txReceipt)
-
-      // Successful contract call to burn token
-      if (txReceipt.status === 1) {
-        window.emailjs.send(
-          'default_service', // default email provider in your EmailJS account
-          'test',
-          addressInfo
-        )
-
-        setSuccess(true)
-      } else {
-        setSubmitError(true)
-      }
-    }
-  }
-
-  function validateForm(addressInfo) {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-    const emailValid = re.test(String(email).toLowerCase())
-    console.log(emailValid)
-
-    emailValid ? setEmailError(false) : setEmailError(true)
-
-    const addressComplete = Object.values(addressInfo).every(o => o != null)
-
-    addressComplete ? setAddressError(false) : setAddressError(true)
-
-    return emailValid && addressComplete
   }
 
   function renderContent() {
     return (
-      <div style={{ width: '100%' }}>
-        <h3>Shipping Info {isAddressComplete ? <font color="#DC6BE5"> Form incomplete</font> : null}</h3>
-        <p>Name</p>
-        <Input onChange={e => setName(e.target.value)}></Input>
-        <p>Address</p>
-        <Input onChange={e => setAddress(e.target.value)}></Input>
-        <p>City</p>
-        <Input onChange={e => setCity(e.target.value)}></Input>
-        <p>Country</p>
-        <Select onChange={x => setCountry(x.target.value)}>
-          <option value="" selected disabled hidden>
-            Choose here
-          </option>
-          {getCountries().map(countries => {
-            return <option value={countries.code}>{countries.name}</option>
-          })}
-        </Select>
-        <p>State/Province</p>
-        <Select onChange={e => setState({ ...state, state: e.target.value })}>
-          {country
-            ? getStates(country).map(state => {
-                return <option value={state}>{state}</option>
-              })
-            : null}
-        </Select>
-        <p>Postal Code</p>
-        <Input onChange={e => setPostalCode(e.target.value)}></Input>
-
-        <p>
-          E-mail Address{' '}
-          {isEmailError ? (
-            <font color="#DC6BE5">
-              <b> Invalid E-mail</b>
-            </font>
-          ) : null}
-        </p>
-        <Input onChange={e => setEmail(e.target.value)}></Input>
-
-        <i>By burning 1 URING token, you confirm shipment to this address</i>
-        <Button
-          disabled={isSuccess || !account ? true : null}
-          style={{ marginTop: '1em', width: '200px' }}
-          onClick={() => burnToken()}
-          text={(loading && !isSuccess) ? <LoadingDots /> : 'Confirm'}
-        />
-        <Success ref={successRef} visible={isSuccess}>Redemption Successful!</Success>
-        <Error visible={isSubmitError}>Something went wrong...</Error>
+      <div>
+        <Redeem />
       </div>
     )
   }
 
-  const Content = (
-    <>
+  return (
+    <AppWrapper>
       <Header ready={ready} dollarPrice={dollarPrice} />
       <Gallery />
       <div>
@@ -227,8 +90,7 @@ export default function Body({
           )}
           <SockCount>{reserveSOCKSToken && `${amountFormatter(reserveSOCKSToken, 18, 0)} available`}</SockCount>
         </MarketData>
-        <Redeem>
-          {/* {balanceSOCKS > 0 ? `You have ${amountFormatter(balanceSOCKS, 18, 0)} SOCKS !! ` : 'Try clicking buyyyyy '} */}
+        <RedeemSection>
           <RedeemLink>
             <Button style={{ width: '200px' }} onClick={() => redeem()} text={'Redeem'} />
           </RedeemLink>
@@ -238,7 +100,7 @@ export default function Body({
             </a>{' '}
             for Tokenized Goods
           </p>
-        </Redeem>
+        </RedeemSection>
       </div>
       <Checkout
         selectedTokenSymbol={selectedTokenSymbol}
@@ -263,10 +125,8 @@ export default function Body({
           redeemVisible={state.redeemVisible}
         />
       </div>
-    </>
+    </AppWrapper>
   )
-
-  return <AppWrapper>{Content}</AppWrapper>
 }
 
 const AppWrapper = styled.div`
@@ -377,7 +237,7 @@ const SockCount = styled.p`
   height: 0.5rem;
 `
 
-const Redeem = styled.p`
+const RedeemSection = styled.div`
   font-weight: 500;
   /* padding-left: 10vw; */
   font-size: 1rem;
@@ -445,8 +305,6 @@ const CheckoutFrame = styled.form`
 
     bottom: ${props => (props.redeemVisible ? '20%' : '-100%')};
   }
-
-
 `
 
 const CheckoutBackground = styled.div`
