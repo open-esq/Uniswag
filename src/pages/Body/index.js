@@ -39,6 +39,7 @@ export default function Body({
   const { account, setConnector } = useWeb3Context()
   const [state, setState] = useAppContext()
   const [currentTransaction, _setCurrentTransaction] = useState({})
+  const [loading, setLoading] = useState(false)
   const setCurrentTransaction = useCallback((hash, type, amount) => {
     _setCurrentTransaction({ hash, type, amount })
   }, [])
@@ -61,7 +62,7 @@ export default function Body({
   function renderContent() {
     return (
       <div>
-        <Redeem />
+        <Redeem loading={loading} setLoading={setLoading}/>
       </div>
     )
   }
@@ -122,6 +123,7 @@ export default function Body({
         <CheckoutBackground
           onClick={() => setState(state => ({ ...state, redeemVisible: !state.redeemVisible }))}
           redeemVisible={state.redeemVisible}
+          loading={loading}
         />
       </div>
     </AppWrapper>
@@ -314,8 +316,7 @@ const CheckoutBackground = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: ${props => (props.redeemVisible ? '1' : '-1')};
-  pointer-events: ${props => (props.redeemVisible ? 'all' : 'none')};
+  pointer-events: ${props => (props.redeemVisible && !props.loading ? 'all' : 'none')};
   background-color: ${props => props.theme.black};
   transition: opacity 0.3s;
-  pointer-events: ${props => (props.redeemVisible ? 'all' : 'none')};
 `

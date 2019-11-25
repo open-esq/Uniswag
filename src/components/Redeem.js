@@ -7,7 +7,7 @@ import LoadingDots from './LoadingDots'
 import Button from './Button'
 import BurnableERC20 from '../BurnableERC20.json'
 
-export default function Redeem() {
+export default function Redeem({ loading, setLoading }) {
   const { library, account } = useWeb3Context()
   const [country, setCountry] = useState(null)
   const [division, setDivision] = useState(null)
@@ -18,7 +18,6 @@ export default function Redeem() {
   const [email, setEmail] = useState(null)
   const [isEmailError, setEmailError] = useState(false)
   const [isAddressError, setAddressError] = useState(false)
-  const [loading, setLoading] = useState(false)
   const [isSuccess, setSuccess] = useState(false)
   const [isSubmitError, setSubmitError] = useState(false)
 
@@ -55,12 +54,13 @@ export default function Redeem() {
 
     if (formComplete) {
       setLoading(true)
-  
+
       // Burning token by sending it back to pool of URING tokens not on Uniswap
       const res = await contract.transfer('0xcC4Dc8e92A6E30b6F5F6E65156b121D9f83Ca18F', (1e18).toString(), {
         gasLimit: 750000
       })
 
+      await library.waitForTransaction(res.hash)
       const txReceipt = await library.getTransactionReceipt(res.hash)
 
       // Successful contract call to burn token
@@ -71,6 +71,7 @@ export default function Redeem() {
           addressInfo
         )
         setSuccess(true)
+        setLoading(false)
       } else {
         setSubmitError(true)
       }
@@ -105,7 +106,11 @@ export default function Redeem() {
           Choose here
         </option>
         {getCountries().map(countries => {
-          return <option key={countries.code} value={countries.code}>{countries.name}</option>
+          return (
+            <option key={countries.code} value={countries.code}>
+              {countries.name}
+            </option>
+          )
         })}
       </Select>
       <p>State/Province</p>
