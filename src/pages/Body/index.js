@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { useWeb3Context } from 'web3-react'
 import { useAppContext } from '../../context'
@@ -8,6 +8,7 @@ import Button from '../../components/Button'
 import Checkout from '../../components/Checkout'
 import Redeem from '../../components/Redeem'
 import { amountFormatter } from '../../utils'
+import useInitializedVariables from '../../utils/helper'
 
 function Header({ ready, dollarPrice }) {
   const { account } = useWeb3Context()
@@ -22,20 +23,7 @@ function Header({ ready, dollarPrice }) {
   )
 }
 
-export default function Body({
-  selectedTokenSymbol,
-  setSelectedTokenSymbol,
-  ready,
-  unlock,
-  validateBuy,
-  buy,
-  validateSell,
-  sell,
-  dollarize,
-  dollarPrice,
-  balanceSOCKS,
-  reserveSOCKSToken
-}) {
+export default function Body() {
   const { account, setConnector } = useWeb3Context()
   const [state, setState] = useAppContext()
   const [currentTransaction, _setCurrentTransaction] = useState({})
@@ -46,6 +34,19 @@ export default function Body({
   const clearCurrentTransaction = useCallback(() => {
     _setCurrentTransaction({})
   }, [])
+
+  const {selectedTokenSymbol,
+    setSelectedTokenSymbol,
+    ready,
+    unlock,
+    validateBuy,
+    buy,
+    validateSell,
+    sell,
+    dollarize,
+    dollarPrice,
+    balanceSOCKS,
+    reserveSOCKSToken} = useInitializedVariables();
 
   function handleToggleCheckout(tradeType) {
     setState(state => ({ ...state, redeemVisible: !state.redeemVisible, tradeType }))
