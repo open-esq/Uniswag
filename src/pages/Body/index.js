@@ -72,7 +72,7 @@ export default function Body({token}) {
     <AppWrapper>
       <Header ready={ready} dollarPrice={dollarPrice} tokenSymbol={token.tokenSymbol} tokenName={token.tokenName}
       description={token.description}/>
-      <Gallery />
+      <Gallery imgSrc={token.imgSrc}/>
       <div>
         <Intro>
           purchasing a <b>{token.tokenSymbol}</b> entitles you to 1{' '}
