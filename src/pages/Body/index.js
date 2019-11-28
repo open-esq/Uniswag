@@ -10,20 +10,20 @@ import Redeem from '../../components/Redeem'
 import { amountFormatter } from '../../utils'
 import useInitializedVariables from '../../utils/helper'
 
-function Header({ ready, dollarPrice }) {
+function Header({ ready, dollarPrice, tokenSymbol, tokenName, description }) {
   const { account } = useWeb3Context()
 
   return (
     <HeaderFrame>
       <Status ready={ready} account={account} />
-      <Title>Uni ring tokens (URING)</Title>
+      <Title>{tokenName} tokens ({tokenSymbol})</Title>
       <CurrentPrice>{dollarPrice && `$${amountFormatter(dollarPrice, 18, 2)} USD`}</CurrentPrice>
-      <Tagline>dynamically priced rings</Tagline>
+      <Tagline>dynamically priced {description}</Tagline>
     </HeaderFrame>
   )
 }
 
-export default function Body() {
+export default function Body({token}) {
   const { account, setConnector } = useWeb3Context()
   const [state, setState] = useAppContext()
   const [currentTransaction, _setCurrentTransaction] = useState({})
@@ -46,7 +46,7 @@ export default function Body() {
     dollarize,
     dollarPrice,
     balanceSOCKS,
-    reserveSOCKSToken} = useInitializedVariables();
+    reserveSOCKSToken} = useInitializedVariables(token);
 
   function handleToggleCheckout(tradeType) {
     setState(state => ({ ...state, redeemVisible: !state.redeemVisible, tradeType }))
@@ -70,17 +70,18 @@ export default function Body() {
 
   return (
     <AppWrapper>
-      <Header ready={ready} dollarPrice={dollarPrice} />
+      <Header ready={ready} dollarPrice={dollarPrice} tokenSymbol={token.tokenSymbol} tokenName={token.tokenName}
+      description={token.description}/>
       <Gallery />
       <div>
         <Intro>
-          purchasing a <b>URING</b> entitles you to 1{' '}
+          purchasing a <b>{token.tokenSymbol}</b> entitles you to 1{' '}
           <i>
             <b>real</b>
           </i>{' '}
-          limited edition uni ring, shipped anywhere in the world.
+          limited edition {token.tokenSymbol}, shipped anywhere in the world.
         </Intro>
-        <BuyButtons balance={balanceSOCKS} />
+        <BuyButtons balance={balanceSOCKS} tokenSymbol={token.tokenSymbol}/>
         <MarketData>
           {balanceSOCKS > 0 ? (
             <SockCount>
