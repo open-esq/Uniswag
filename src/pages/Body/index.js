@@ -85,7 +85,7 @@ export default function Body({token}) {
         <MarketData>
           {balanceSOCKS > 0 ? (
             <SockCount>
-              You own {balanceSOCKS && `${amountFormatter(balanceSOCKS, 18, 0)}`} URINGS&nbsp; • &nbsp;
+              You own {balanceSOCKS && `${amountFormatter(balanceSOCKS, 18, 0)}`} {token.tokenSymbol}&nbsp; • &nbsp;
             </SockCount>
           ) : (
             ''
