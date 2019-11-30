@@ -9,6 +9,7 @@ import Checkout from '../../components/Checkout'
 import Redeem from '../../components/Redeem'
 import { amountFormatter } from '../../utils'
 import useInitializedVariables from '../../utils/helper'
+import { TOKEN_SYMBOLS } from '../../utils'
 
 function Header({ ready, dollarPrice, tokenSymbol, tokenName, description }) {
   const { account } = useWeb3Context()
@@ -63,7 +64,7 @@ export default function Body({token}) {
   function renderContent() {
     return (
       <div>
-        <Redeem loading={loading} setLoading={setLoading} token={token.tokenSymbol}/>
+        <Redeem loading={loading} setLoading={setLoading} token={token.tokenSymbol} isShirt={token.tokenSymbol === TOKEN_SYMBOLS.LSHRT}/>
       </div>
     )
   }
@@ -319,7 +320,7 @@ const RedeemBackground = styled.div`
   width: 100vw;
   height: 100vh;
   z-index: ${props => (props.redeemVisible ? '1' : '-1')};
-  pointer-events: ${props => (props.redeemVisible && !props.loading ? 'all' : 'none')};
+  pointer-events: ${props => (props.redeemVisible && !props.loading  ? 'all' : 'none')};
   background-color: ${props => props.theme.black};
   transition: opacity 0.3s;
 `

@@ -7,7 +7,7 @@ import LoadingDots from './LoadingDots'
 import Button from './Button'
 import BurnableERC20 from '../BurnableERC20.json'
 
-export default function Redeem({ loading, setLoading, token }) {
+export default function Redeem({ loading, setLoading, token, isShirt }) {
   const { library, account } = useWeb3Context()
   const [country, setCountry] = useState(null)
   const [division, setDivision] = useState(null)
@@ -20,6 +20,7 @@ export default function Redeem({ loading, setLoading, token }) {
   const [isAddressError, setAddressError] = useState(false)
   const [isSuccess, setSuccess] = useState(false)
   const [isSubmitError, setSubmitError] = useState(false)
+  const [size, setSize] = useState(false)
 
   const successRef = useRef()
   const incompleteRef = useRef()
@@ -39,8 +40,9 @@ export default function Redeem({ loading, setLoading, token }) {
     setSuccess(false)
     setSubmitError(false)
 
-    const contract = getContract(TOKEN_ADDRESSES.SOCKS, BurnableERC20, library, account)
+    const contract = isShirt ? getContract(TOKEN_ADDRESSES.LSHRT, BurnableERC20, library, account) : getContract(TOKEN_ADDRESSES.SOCKS, BurnableERC20, library, account)
     const addressInfo = {
+      ...isShirt && {size},
       name,
       address,
       city,
@@ -68,7 +70,7 @@ export default function Redeem({ loading, setLoading, token }) {
         window.emailjs.send(
           'default_service', // default email provider in your EmailJS account
           'uring_redeem',
-          addressInfo
+          {...addressInfo, token}
         )
         setSuccess(true)
         setLoading(false)
@@ -93,6 +95,20 @@ export default function Redeem({ loading, setLoading, token }) {
 
   return (
     <div ref={incompleteRef} style={{ width: '100%' }}>
+      {isShirt ? (
+        <>
+          <h3>Select Shirt Size</h3>
+          <Select onChange={e => setSize(e.target.value)}>
+            <option value="">Select Size</option>
+            <option value="XS">XS</option>
+            <option value="S">S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+          </Select>
+        </>
+      ) : null}
+
       <h3>Shipping Info {isAddressError ? <font color="#DC6BE5"> Form incomplete</font> : null}</h3>
       <p>Name</p>
       <Input onChange={e => setName(e.target.value)}></Input>
