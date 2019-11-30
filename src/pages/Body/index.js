@@ -105,6 +105,7 @@ export default function Body({token}) {
         </RedeemSection>
       </div>
       <Checkout
+        token={token.tokenSymbol}
         selectedTokenSymbol={selectedTokenSymbol}
         setSelectedTokenSymbol={setSelectedTokenSymbol}
         ready={ready}
