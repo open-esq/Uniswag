@@ -56,6 +56,7 @@ function getValidationErrorMessage(validationError) {
 }
 
 export default function BuyAndSell({
+  token,
   selectedTokenSymbol,
   setSelectedTokenSymbol,
   ready,
@@ -144,7 +145,9 @@ export default function BuyAndSell({
 
     return (
       <>
-        <p>{state.count} URINGS</p>
+        <p>
+          {state.count} {token}
+        </p>
         {conditionalRender}
       </>
     )
@@ -162,11 +165,11 @@ export default function BuyAndSell({
       <CheckoutControls buying={buying}>
         <SelectToken selectedTokenSymbol={selectedTokenSymbol} setSelectedTokenSymbol={setSelectedTokenSymbol} />
         <div>↓</div>
-        <IncrementToken />
+        <IncrementToken token={token}/>
       </CheckoutControls>
       {shouldRenderUnlock ? (
         <ButtonFrame
-          text={`Unlock ${buying ? selectedTokenSymbol : 'URINGS'}`}
+          text={`Unlock ${buying ? selectedTokenSymbol : `${token}S`}`}
           type={'cta'}
           onClick={() => {
             unlock(buying).then(({ hash }) => {
@@ -178,7 +181,7 @@ export default function BuyAndSell({
         <ButtonFrame
           className="button"
           disabled={validationError !== null}
-          text={account === null ? 'Connect Wallet' : buying ? 'Buy URINGS' : 'Sell URINGS'}
+          text={account === null ? 'Connect Wallet' : buying ? `Buy ${token}` : `Sell ${token}`}
           type={'cta'}
           onClick={() => {
             if (account === null) {

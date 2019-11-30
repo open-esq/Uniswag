@@ -7,7 +7,7 @@ import LoadingDots from './LoadingDots'
 import Button from './Button'
 import BurnableERC20 from '../BurnableERC20.json'
 
-export default function Redeem({ loading, setLoading }) {
+export default function Redeem({ loading, setLoading, token }) {
   const { library, account } = useWeb3Context()
   const [country, setCountry] = useState(null)
   const [division, setDivision] = useState(null)
@@ -134,7 +134,7 @@ export default function Redeem({ loading, setLoading }) {
       </p>
       <Input onChange={e => setEmail(e.target.value)}></Input>
 
-      <i>By burning 1 URING token, you confirm shipment to this address</i>
+      <i>By burning 1 {token} token, you confirm shipment to this address</i>
       <Button
         disabled={isSuccess || !account || loading ? true : null}
         style={{ marginTop: '1em', width: '200px' }}

@@ -48,22 +48,22 @@ export default function Body({token}) {
     balanceSOCKS,
     reserveSOCKSToken} = useInitializedVariables(token);
 
-  function handleToggleCheckout(tradeType) {
-    setState(state => ({ ...state, redeemVisible: !state.redeemVisible, tradeType }))
+  function handleToggleCheckout(redeemToken) {
+    setState(state => ({ ...state, redeemVisible: !state.redeemVisible, redeemToken }))
   }
 
-  async function redeem() {
+  async function redeem(selectedToken) {
     if (account === null) {
       setConnector('Injected', { suppressAndThrowErrors: true })
     }
 
-    handleToggleCheckout()
+    handleToggleCheckout(selectedToken)
   }
 
   function renderContent() {
     return (
       <div>
-        <Redeem loading={loading} setLoading={setLoading}/>
+        <Redeem loading={loading} setLoading={setLoading} token={token.tokenSymbol}/>
       </div>
     )
   }
@@ -94,7 +94,7 @@ export default function Body({token}) {
         </MarketData>
         <RedeemSection>
           <RedeemLink>
-            <Button style={{ width: '200px' }} onClick={() => redeem()} text={'Redeem'} />
+            <Button style={{ width: '200px' }} onClick={() => redeem(token.tokenSymbol)} text={'Redeem'} />
           </RedeemLink>
           <p>
             <a target="_" href="https://ipfs.infura.io/ipfs/QmVPXerxekzpaxaAvZE2cHU51c9cYumJzLPoLd36385X6u">
@@ -122,8 +122,8 @@ export default function Body({token}) {
         clearCurrentTransaction={clearCurrentTransaction}
       />
       <div>
-        <CheckoutFrame redeemVisible={state.redeemVisible}>{renderContent()}</CheckoutFrame>
-        <CheckoutBackground
+        <RedeemFrame redeemVisible={state.redeemVisible} isActiveToken={state.redeemToken === token.tokenSymbol}>{renderContent()}</RedeemFrame>
+        <RedeemBackground
           onClick={() => setState(state => ({ ...state, redeemVisible: !state.redeemVisible }))}
           redeemVisible={state.redeemVisible}
           loading={loading}
@@ -274,12 +274,12 @@ const MarketData = styled.div`
     padding-left: 10vw;
   }
 `
-const CheckoutFrame = styled.form`
+const RedeemFrame = styled.form`
   position: fixed;
-  bottom: ${props => (props.redeemVisible ? '0px' : '-100%')};
+  bottom: ${props => (props.redeemVisible && props.isActiveToken  ? '0px' : '-100%')};
   left: 0px;
-  z-index: ${props => (props.redeemVisible ? '2' : '-1  ')};
-  opacity: ${props => (props.redeemVisible ? '1' : '0')};
+  z-index: ${props => (props.redeemVisible && props.isActiveToken  ? '2' : '-1  ')};
+  opacity: ${props => (props.redeemVisible && props.isActiveToken  ? '1' : '0')};
   transition: bottom 0.3s;
   width: 100%;
   margin: 0px;
@@ -304,14 +304,14 @@ const CheckoutFrame = styled.form`
     margin-top: 10px;
     left: 0;
     right: 0;
-    z-index: ${props => (props.redeemVisible ? '2' : '-1  ')};
-    opacity: ${props => (props.redeemVisible ? '1' : '0')};
+    z-index: ${props => (props.redeemVisible && props.isActiveToken  ? '2' : '-1  ')};
+    opacity: ${props => (props.redeemVisible && props.isActiveToken  ? '1' : '0')};
 
-    bottom: ${props => (props.redeemVisible ? '20%' : '-100%')};
+    bottom: ${props => (props.redeemVisible && props.isActiveToken  ? '20%' : '-100%')};
   }
 `
 
-const CheckoutBackground = styled.div`
+const RedeemBackground = styled.div`
   position: fixed;
   top: 0px;
   left: 0px;
