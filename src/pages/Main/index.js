@@ -16,8 +16,8 @@ export default function Main() {
   }
 
   const uringToken = {
-    tokenSymbol: TOKEN_SYMBOLS.SOCKS,
-    tokenAddress: TOKEN_ADDRESSES.SOCKS,
+    tokenSymbol: TOKEN_SYMBOLS.URING,
+    tokenAddress: TOKEN_ADDRESSES.URING,
     tokenName: `Uni Ring`,
     description: 'rings',
     imgSrc: uringImg

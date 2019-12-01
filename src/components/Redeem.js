@@ -40,7 +40,7 @@ export default function Redeem({ loading, setLoading, token, isShirt }) {
     setSuccess(false)
     setSubmitError(false)
 
-    const contract = isShirt ? getContract(TOKEN_ADDRESSES.LSHRT, BurnableERC20, library, account) : getContract(TOKEN_ADDRESSES.SOCKS, BurnableERC20, library, account)
+    const contract = isShirt ? getContract(TOKEN_ADDRESSES.LSHRT, BurnableERC20, library, account) : getContract(TOKEN_ADDRESSES.URING, BurnableERC20, library, account)
     const addressInfo = {
       ...isShirt && {size},
       name,

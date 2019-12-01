@@ -84,7 +84,7 @@ function calculateAmount(
   reserveSelectedTokenToken
 ) {
   // eth to token - buy
-  if (inputTokenSymbol === TOKEN_SYMBOLS.ETH && outputTokenSymbol === TOKEN_SYMBOLS.SOCKS) {
+  if (inputTokenSymbol === TOKEN_SYMBOLS.ETH && outputTokenSymbol === TOKEN_SYMBOLS.URING) {
     const amount = calculateEtherTokenInputFromOutput(SOCKSAmount, reserveSOCKSETH, reserveSOCKSToken)
     if (amount.lte(ethers.constants.Zero) || amount.gte(ethers.constants.MaxUint256)) {
       throw Error()
@@ -93,7 +93,7 @@ function calculateAmount(
   }
 
   // token to eth - sell
-  if (inputTokenSymbol === TOKEN_SYMBOLS.SOCKS && outputTokenSymbol === TOKEN_SYMBOLS.ETH) {
+  if (inputTokenSymbol === TOKEN_SYMBOLS.URING && outputTokenSymbol === TOKEN_SYMBOLS.ETH) {
     const amount = calculateEtherTokenOutputFromInput(SOCKSAmount, reserveSOCKSToken, reserveSOCKSETH)
     if (amount.lte(ethers.constants.Zero) || amount.gte(ethers.constants.MaxUint256)) {
       throw Error()
@@ -103,7 +103,7 @@ function calculateAmount(
   }
 
   // token to token - buy or sell
-  const buyingSOCKS = outputTokenSymbol === TOKEN_SYMBOLS.SOCKS
+  const buyingSOCKS = outputTokenSymbol === TOKEN_SYMBOLS.URING
 
   if (buyingSOCKS) {
     // eth needed to buy x socks
@@ -277,7 +277,7 @@ export default function useInitializedVariables(token) {
       try {
         requiredValueInSelectedToken = calculateAmount(
           selectedTokenSymbol,
-          TOKEN_SYMBOLS.SOCKS,
+          TOKEN_SYMBOLS.URING,
           parsedValue,
           reserveSOCKSETH,
           reserveSOCKSToken,
@@ -396,7 +396,7 @@ export default function useInitializedVariables(token) {
       let requiredValueInSelectedToken
       try {
         requiredValueInSelectedToken = calculateAmount(
-          TOKEN_SYMBOLS.SOCKS,
+          TOKEN_SYMBOLS.URING,
           selectedTokenSymbol,
           parsedValue,
           reserveSOCKSETH,
