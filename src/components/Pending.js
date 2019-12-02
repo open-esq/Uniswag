@@ -33,7 +33,7 @@ export const EtherscanLink = styled.a`
   font-size: 12px;
 `
 
-export default function Pending({ hash, type, amount }) {
+export default function Pending({ hash, type, amount, isShirt }) {
   if (type === TRADE_TYPES.UNLOCK) {
     return (
       <PendingFrame>
@@ -54,10 +54,11 @@ export default function Pending({ hash, type, amount }) {
       <PendingFrame>
         <Emoji>
           <span role="img" aria-label="ring">
-            💍
+            {isShirt ? '👕' : '💍'}
           </span>
         </Emoji>
-        {`Buying ${amountFormatter(amount, 18, 0)} URING`}
+        {`Buying ${amountFormatter(amount, 18, 0)} `}
+        {isShirt ? 'LSHRT' : 'URING'}
         <SubText>incoming...</SubText>
         <EtherscanLink href={link(hash)} target="_blank" rel="noopener noreferrer">
           transaction details ↗
@@ -72,7 +73,8 @@ export default function Pending({ hash, type, amount }) {
             💍
           </span>
         </Emoji>
-        {`Selling ${amountFormatter(amount, 18, 0)} URING`}
+        {`Selling ${amountFormatter(amount, 18, 0)} `}
+        {isShirt ? 'LSHRT' : 'URING'}
         <SubText>this might take a bit</SubText>
         <EtherscanLink href={link(hash)} target="_blank" rel="noopener noreferrer">
           transaction details ↗

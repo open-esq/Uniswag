@@ -49,6 +49,8 @@ export default function Body({token}) {
     balanceSOCKS,
     reserveSOCKSToken} = useInitializedVariables(token);
 
+  const isShirt = token.tokenSymbol === TOKEN_SYMBOLS.LSHRT
+
   function handleToggleCheckout(redeemToken) {
     setState(state => ({ ...state, redeemVisible: !state.redeemVisible, redeemToken }))
   }
@@ -64,7 +66,7 @@ export default function Body({token}) {
   function renderContent() {
     return (
       <div>
-        <Redeem loading={loading} setLoading={setLoading} token={token.tokenSymbol} isShirt={token.tokenSymbol === TOKEN_SYMBOLS.LSHRT}/>
+        <Redeem loading={loading} setLoading={setLoading} token={token.tokenSymbol} isShirt={isShirt}/>
       </div>
     )
   }
@@ -98,7 +100,7 @@ export default function Body({token}) {
             <Button style={{ width: '200px' }} onClick={() => redeem(token.tokenSymbol)} text={'Redeem'} />
           </RedeemLink>
           <p>
-            <a target="_" href="https://ipfs.infura.io/ipfs/QmVPXerxekzpaxaAvZE2cHU51c9cYumJzLPoLd36385X6u">
+            <a target="_" href={isShirt ? "https://ipfs.infura.io/ipfs/QmNYbqZPWyNkeJfDcDHaVA2rkxef7mpEcm8yAQxeKFUkLP" :"https://ipfs.infura.io/ipfs/QmVPXerxekzpaxaAvZE2cHU51c9cYumJzLPoLd36385X6u"}>
               Warranty
             </a>{' '}
             for Tokenized Goods
@@ -106,6 +108,7 @@ export default function Body({token}) {
         </RedeemSection>
       </div>
       <Checkout
+        isShirt={isShirt}
         token={token.tokenSymbol}
         selectedTokenSymbol={selectedTokenSymbol}
         setSelectedTokenSymbol={setSelectedTokenSymbol}
@@ -143,12 +146,11 @@ const AppWrapper = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding-top: 20vh;
+  padding-top: 15vh;
   overflow: scroll;
   @media only screen and (min-device-width: 768px) {
     max-height: 480px;
     overflow: hidden;
-    height: 100%;
   }
   @media only screen and (max-width: 640px) {
     /* padding-top: 0px; */

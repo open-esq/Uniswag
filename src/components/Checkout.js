@@ -27,6 +27,7 @@ export function useCount() {
 }
 
 export default function Checkout({
+  isShirt,
   token,
   selectedTokenSymbol,
   setSelectedTokenSymbol,
@@ -65,7 +66,7 @@ export default function Checkout({
       return <Connect setShowConnect={setShowConnect} />
     } else if (currentTransactionHash) {
       return pending ? (
-        <Pending hash={currentTransactionHash} type={currentTransactionType} amount={currentTransactionAmount} />
+        <Pending hash={currentTransactionHash} type={currentTransactionType} amount={currentTransactionAmount} isShirt={isShirt}/>
       ) : (
         <Confirmed
           hash={currentTransactionHash}
